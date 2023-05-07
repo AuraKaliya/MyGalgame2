@@ -1,0 +1,12 @@
+{
+    "10001": {
+        "Gesture_Normal": ":/Character/RESOURCE/test_Normal.png",
+        "Gesture_Happy": ":/Character/RESOURCE/test_Happy.png",
+        "Introduction": "幻想而生的少女，拥有谜一样的背景。",
+        "Name": "李韶奏",
+        "Gesture_Shy": ":/Character/RESOURCE/test_Shy.png",
+        "Gesture_Lose": ":/Character/RESOURCE/test_Lose.png",
+        "Lines": "H001:仇视|H002:平淡|H003:友好|H004:信赖|H005:爱恋",
+        "ID": 10001
+    }
+}

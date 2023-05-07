@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/Character">
+        <file>RESOURCE/head_LiShaoZou.jpg</file>
+        <file>RESOURCE/test_Happy.png</file>
+        <file>RESOURCE/test_Lose.png</file>
+        <file>RESOURCE/test_Normal.png</file>
+        <file>RESOURCE/test_Shy.png</file>
+    </qresource>
+    <qresource prefix="/Music">
+        <file>RESOURCE/test_music1.mp3</file>
+        <file>RESOURCE/test_music2.mp3</file>
+    </qresource>
+</RCC>

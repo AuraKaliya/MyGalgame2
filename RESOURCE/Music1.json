@@ -1,0 +1,12 @@
+{
+    "musicList": [
+        {
+            "name": "test_music1",
+            "src": "qrc:/Music/RESOURCE/test_music1.mp3"
+        },
+        {
+            "name": "test_music2",
+            "src": "qrc:/Music/RESOURCE/test_music2.mp3"
+        }
+    ]
+}

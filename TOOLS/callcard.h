@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QString>
 #include <QDateTime>
-
+#include <QRandomGenerator>
 
 
 class callCard : public QObject
@@ -18,6 +18,8 @@ private:
     QVector<int> m_cardID; // 卡牌 ID
     QVector<QString> m_cardRarity; // 卡牌稀有度
     QList<QList<QString> > m_callRecord; // 抽卡记录
+
+    QRandomGenerator randint;
 
     void initCardPool(const QVector<int>& cardID, const QVector<QString>& cardRarity); // 初始化卡池
 

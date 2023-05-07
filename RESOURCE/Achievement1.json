@@ -1,0 +1,27 @@
+{
+    "cardInfos": [
+        {
+            "ID": 0,
+            "LoveExp": "",
+            "LoveLevel": ""
+        }
+    ],
+    "createTime": "2023-04-29 04:36:11",
+    "currencies": [
+        {
+            "amount": 0,
+            "name": ""
+        }
+    ],
+    "deckInfo": [
+        [
+            "",
+            ""
+        ]
+    ],
+    "saveId": 0,
+    "storyProgress": [
+        0
+    ],
+    "updateTime": "2023-04-29 14:21:34"
+}

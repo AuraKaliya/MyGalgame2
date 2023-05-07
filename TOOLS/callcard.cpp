@@ -1,6 +1,7 @@
 ﻿#include "callCard.h"
 #include <QtGlobal>
 
+
 callCard* callCard::m_instance = nullptr; // 静态成员变量初始化
 
 callCard::callCard(QObject *parent) : QObject(parent)
@@ -43,7 +44,8 @@ void callCard::initCardPool(const QVector<int>& cardID, const QVector<QString>& 
         int index = -1;
         // 随机从卡池中选择一个稀有度为 SSR 的卡牌，直到找到符合条件的为止
         while (index == -1 || m_cardRarity.at(index) != "SSR") {
-            index = qrand() % m_cardPool.size();
+           // index = qrand() % m_cardPool.size();
+            index=randint.bounded(0,m_cardPool.size());
         }
         m_cardPool.insert(index, m_cardID.at(index));
     }
@@ -51,7 +53,8 @@ void callCard::initCardPool(const QVector<int>& cardID, const QVector<QString>& 
         int index = -1;
         // 随机从卡池中选择一个稀有度为 SR 的卡牌，直到找到符合条件的为止
         while (index == -1 || m_cardRarity.at(index) != "SR") {
-            index = qrand() % m_cardPool.size();
+            // index = qrand() % m_cardPool.size();
+            index=randint.bounded(0,m_cardPool.size());
         }
         m_cardPool.insert(index, m_cardID.at(index));
     }
@@ -59,7 +62,8 @@ void callCard::initCardPool(const QVector<int>& cardID, const QVector<QString>& 
         int index = -1;
         // 随机从卡池中选择一个稀有度为 R 的卡牌，直到找到符合条件的为止
         while (index == -1 || m_cardRarity.at(index) != "R") {
-            index = qrand() % m_cardPool.size();
+            //index = qrand() % m_cardPool.size();
+            index=randint.bounded(0,m_cardPool.size());
         }
         m_cardPool.insert(index, m_cardID.at(index));
     }
@@ -76,7 +80,8 @@ void callCard::updateCardPool()
             int index = -1;
             // 随机从卡牌 ID 中选择一个稀有度为 SSR 的卡牌，直到找到符合条件的为止
             while (index == -1 || m_cardRarity.at(index) != "SSR") {
-                index = qrand() % m_cardID.size();
+                 // index = qrand() % m_cardID.size();
+                index=randint.bounded(0,m_cardID.size());
             }
            m_cardPool.insert(index, {m_cardID.at(index)});
         }
@@ -84,7 +89,8 @@ void callCard::updateCardPool()
             int index = -1;
             // 随机从卡牌 ID 中选择一个稀有度为 SR 的卡牌，直到找到符合条件的为止
             while (index == -1 || m_cardRarity.at(index) != "SR") {
-                index = qrand() % m_cardID.size();
+               // index = qrand() % m_cardID.size();
+                 index=randint.bounded(0,m_cardID.size());
             }
            m_cardPool.insert(index, {m_cardID.at(index)});
         }
@@ -92,7 +98,8 @@ void callCard::updateCardPool()
             int index = -1;
             // 随机从卡牌 ID 中选择一个稀有度为 R 的卡牌，直到找到符合条件的为止
             while (index == -1 || m_cardRarity.at(index) != "R") {
-                index = qrand() % m_cardID.size();
+                // index = qrand() % m_cardID.size();
+                  index=randint.bounded(0,m_cardID.size());
             }
             m_cardPool.insert(index, m_cardID.at(index));
         }
@@ -105,7 +112,8 @@ QPair<int, QString> callCard::drawCard()
         return qMakePair(-1, QString("error"));
     }
     // 随机抽取一张卡牌
-    int cardIndex = qrand() % m_cardPool.size();
+   // int cardIndex = qrand() % m_cardPool.size();
+    int cardIndex=randint.bounded(0,m_cardPool.size());
     int drawnCardID = m_cardPool.takeAt(cardIndex);
     QString drawnCardRarity = m_cardRarity.at(cardIndex);
 
