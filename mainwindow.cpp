@@ -5,13 +5,13 @@
 
 
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+  this->setStyleSheet("background-color:black;");
   //  SQLiteSolve::instance();
 
 
@@ -87,9 +87,22 @@ MainWindow::MainWindow(QWidget *parent)
 /**测试：关于音乐播放功能能否正常使用   ---可以正常使用**/
 
 
+//    QGraphicsScene * scene =new QGraphicsScene(this);
+//    QGraphicsView *graphicsView=new QGraphicsView(this);
+//    graphicsView->resize(width(),height());
+//    graphicsView->setScene(scene);
+
+//    QPointF center(graphicsView->width() / 2, graphicsView->height() / 2);
+//    QRgb color = qRgb(0, 162, 232);
+//    RippleEffect* ripple = new RippleEffect(center, color, 20.0);
+//    scene->addItem(ripple);
+
+    //connect(this, &QWidget::clicked, ripple, &RippleEffect::mousePressEvent); // 将点击信号连接到槽函数
 
 
 
+   // 创建RippleEffect对象
+    //connect(this,SIGNAL(mousePressEvent), this, SLOT(pressevent(QMouseEvent *event)));
 
 
 
@@ -103,5 +116,20 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+
+bool MainWindow::event(QEvent *event)
+{
+    if(event->type()==QEvent::MouseButtonPress)
+    {
+        qDebug()<<"PRESS!!";
+        Ripple *rip=new Ripple;
+        rip->move(QCursor::pos());
+        rip->setColor(QColor(255,120,0,255));
+
+        rip->show();
+    }
+    return true;
 }
 

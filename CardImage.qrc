@@ -10,4 +10,10 @@
         <file>RESOURCE/test_music1.mp3</file>
         <file>RESOURCE/test_music2.mp3</file>
     </qresource>
+    <qresource prefix="/UI">
+        <file>RESOURCE/test_trapezoiform1.png</file>
+        <file>RESOURCE/test_trapezoiform2.png</file>
+        <file>RESOURCE/test_trapezoiform3.png</file>
+        <file>RESOURCE/test_trapezoiform4.png</file>
+    </qresource>
 </RCC>
