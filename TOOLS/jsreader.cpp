@@ -152,6 +152,7 @@ void JSReader::init()
 {
     m_achievement=NowAchievement::getInstance();
     m_musicPlayer=MusicPlayer::getInstance();
+    m_menuWidget=MenuWidget::getInstance();
 }
 void JSReader::readJsonFileToMusicPlayer()
 {
@@ -184,4 +185,147 @@ void JSReader::readJsonFileToMusicPlayer()
         musicList.append(music);
     }
     MusicPlayer::getInstance()->init(musicList);
+}
+void JSReader::readJsonFileToStyle()
+{
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // 打开文件失败
+        return;
+    }
+
+    QString jsonStr = file.readAll();
+    file.close();
+
+    QJsonParseError parseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        // 解析json内容失败
+        return;
+    }
+
+    QJsonObject jsonObj = jsonDoc.object();
+
+    // 获取/设置风格名称
+    QString styleName = jsonObj.value("StyleName").toString();
+    Style::getInstance()->setStyleName(styleName);
+
+    // 获取/设置按钮样式
+    QString btnStyle = jsonObj.value("BtnStyle").toString();
+    Style::getInstance()->setBtnStyle(btnStyle);
+
+    // 获取/设置主要标签颜色
+    QString primaryLabelStr = jsonObj.value("PrimaryLabel").toString();
+    QColor primaryLabel(primaryLabelStr);
+    Style::getInstance()->setPrimaryLabel(primaryLabel);
+
+    // 获取/设置背景颜色
+    QString backgroundStr = jsonObj.value("Background").toString();
+    QColor background(backgroundStr);
+    Style::getInstance()->setBackground(background);
+
+    // 获取/设置图标颜色
+    QString iconStr = jsonObj.value("Icon").toString();
+    QColor icon(iconStr);
+    Style::getInstance()->setIcon(icon);
+
+    // 获取/设置深色文本颜色
+    QString textDeepStr = jsonObj.value("TextDeep").toString();
+    QColor textDeep(textDeepStr);
+    Style::getInstance()->setTextDeep(textDeep);
+
+    // 获取/设置浅色文本颜色
+    QString textShoalStr = jsonObj.value("TextShoal").toString();
+    QColor textShoal(textShoalStr);
+    Style::getInstance()->setTextShoal(textShoal);
+
+    // 获取/设置高亮文本颜色
+    QString textHighLightStr = jsonObj.value("TextHighLight").toString();
+    QColor textHighLight(textHighLightStr);
+    Style::getInstance()->setTextHighLight(textHighLight);
+
+    // 获取/设置主标签颜色
+    QString mainLabelStr = jsonObj.value("MainLabel").toString();
+    QColor mainLabel(mainLabelStr);
+    Style::getInstance()->setMainLabel(mainLabel);
+
+    emit Style::getInstance()->styleChanged();
+}
+
+void JSReader::readJsonFileToMenuWidget()
+{
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning("Couldn't open save file.");
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    QJsonDocument jsonDoc(QJsonDocument::fromJson(data));
+    QJsonObject rootObj = jsonDoc.object();
+
+
+    // 背景图片
+    QString bgPath = rootObj.value("backgroundImage").toString();
+    QPixmap background(bgPath);
+    m_menuWidget->setBackground(background);
+
+    // 标题
+    QJsonObject titleObj = rootObj.value("title").toObject();
+    QString titlePath = titleObj.value("TitleImage").toString();
+    QPixmap title(titlePath);
+    QString name = titleObj.value("Name").toString();
+    m_menuWidget->setTitle(title, name);
+
+    // 版本号
+    QJsonObject versionObj = rootObj.value("version").toObject();
+    QString version = versionObj.value("Text").toString();
+    m_menuWidget->setVersion(version);
+
+    // 跳转组件
+    QVector<QJsonObject> jumpGroup;
+    QJsonArray arr = rootObj.value("jumpGroup").toArray();
+    foreach (const auto &v, arr) {
+        QJsonObject obj = v.toObject();
+        jumpGroup << obj;
+    }
+
+    m_menuWidget->clearJumpGroup();  // 清空原有跳转组件
+    for (const auto &obj : jumpGroup) {
+        QString text = obj.value("Text").toString();
+        QPixmap* normalPix = new QPixmap(obj.value("NormalPix").toString());
+        QPixmap* pressPix = new QPixmap(obj.value("PressPix").toString());
+        bool isMask = obj.value("Mask").toBool();
+
+        QSize size(obj.value("FixedSize").toArray().at(0).toInt(), obj.value("FixedSize").toArray().at(1).toInt());
+        qDebug()<<size;
+        QPoint move(obj.value("move").toArray().at(0).toInt(), obj.value("move").toArray().at(1).toInt());
+        JumpLabel *label = new JumpLabel(m_menuWidget);
+        label->setFixedSize(size);
+        label->setPixmapGroup(normalPix,pressPix);
+        label->move(move);
+        label->setVisible(true);
+        if (isMask) {
+            label->setMaskStatus(isMask);
+        }
+        connect(label, &JumpLabel::jump,this,[=](QWidget* destination) {
+            if (text == "新存档") {
+                // 处理新存档的逻辑
+                qDebug()<<"新存档";
+            } else if (text == "读取") {
+                // 处理读取的逻辑
+                qDebug()<<"读取";
+            } else if (text == "设置") {
+                // 处理设置的逻辑
+                qDebug()<<"设置";
+            } else if (text == "退出") {
+                // 处理退出的逻辑
+                qDebug()<<"退出";
+            }
+        });
+
+        Updater::getInstance()->addJumpLabel(label);
+        m_menuWidget->addJumpLabel(label);
+    }
+
 }

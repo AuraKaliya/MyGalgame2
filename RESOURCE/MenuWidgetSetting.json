@@ -1,0 +1,46 @@
+{
+    "jumpGroup": [
+        {
+            "Text": "新存档",
+            "NormalPix": ":/UI/RESOURCE/test_trapezoiform1.png",
+            "PressPix": ":/UI/RESOURCE/test_trapezoiform1_press.png",
+            "Mask": true,
+            "FixedSize": [400, 80],
+            "move": [0,400]
+        },
+        {
+            "Text": "读取",
+            "NormalPix": ":/UI/RESOURCE/test_trapezoiform2.png",
+            "PressPix": ":/UI/RESOURCE/test_trapezoiform2_press.png",
+            "Mask": true,
+            "FixedSize": [470, 80],
+            "move": [0,500]
+        },
+        {
+            "Text": "设置",
+            "NormalPix": ":/UI/RESOURCE/test_trapezoiform3.png",
+            "PressPix": ":/UI/RESOURCE/test_trapezoiform3_press.png",
+            "Mask": true,
+            "FixedSize": [550, 80],
+            "move": [0,600]
+        }, 
+        {
+            "Text": "退出",
+            "NormalPix": ":/UI/RESOURCE/test_trapezoiform4.png",
+            "PressPix": ":/UI/RESOURCE/test_trapezoiform4_press.png",
+            "Mask": true,
+            "FixedSize": [635, 80],
+            "move": [0,700]
+        }
+    ],
+    "title": {
+        "Name": "缘亦不圆",
+        "TitleImage": ":/UI/RESOURCE/test_Title.png",
+        "FixedSize": [650, 140],
+        "move": [500,500]
+    },
+    "version": {
+        "Text": "0.5.0"
+    },
+     "backgroundImage":":/UI/RESOURCE/test_Background.png"
+}

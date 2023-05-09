@@ -1,0 +1,12 @@
+{
+    "StyleName": "FantasyLife",
+    "BtnStyle": "background-color: #FFC0CB; color: #FFFFFF; border: 2px solid #F5A9BC; border-radius: 5px; padding: 6px 12px;",
+    "PrimaryLabel": "#000000",
+    "Background": "#F5DEB3",
+    "Icon": "#8B2252",
+    "TextDeep": "#333333",
+    "TextShoal": "#999999",
+    "TextHighLight": "#7D26CD",
+    "MainLabel": "#191970"
+}
+

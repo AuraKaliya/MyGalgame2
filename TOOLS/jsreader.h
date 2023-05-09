@@ -2,19 +2,28 @@
 #define JSREADER_H
 
 
+#include "updater.h"
 
 #include "nowachievement.h"
 #include "../Story/character.h"
 #include "musicplayer.h"
+#include "../UI/style.h"
+#include "../UI/menuwidget.h"
+
+
 
 #include <QObject>
 #include <QVector>
 #include <QString>
 #include <QFile>
+#include <QPixmap>
+#include <QImage>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+
+
 
 class JSReader : public QObject
 {
@@ -25,6 +34,8 @@ public:
     JSReader();
     void readJsonFileToAchievement();  //读取JSON文件内容到NowAchievement中
     void readJsonFileToMusicPlayer();  //读取JSON文件内容到MusicPlayer中
+    void readJsonFileToStyle();
+    void readJsonFileToMenuWidget();
     QVector<Character*>readJsonFileToCharacter(); //读取JSON文件内容并返回
 
 
@@ -40,6 +51,7 @@ private:
     QString m_filePath;
     NowAchievement * m_achievement;
     MusicPlayer * m_musicPlayer;
+    MenuWidget * m_menuWidget;
 signals:
     void deckInfoUpdated(const QVector<QVector<QString> >& deckInfo);
 

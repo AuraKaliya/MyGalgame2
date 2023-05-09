@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QWidget>
+#include <QCoreApplication>
 
 class JumpLabel : public QLabel
 {
@@ -18,12 +19,20 @@ public:
     void setPixmapGroup(QPixmap* normal, QPixmap* press);
     // 设置是否启用遮罩效果
     void setMaskStatus(bool flag);
+    bool isPressed();
+    void updatePix();
+
+    // 正常状态下的图片指针
+    QPixmap* m_NormalPix;
+    // 被按下状态下的图片指针
+    QPixmap* m_PressPix;
 
 signals:
     // 点击信号，无参数
     void clicked();
     // 点击信号，带一个参数指向目标窗体
     void clicked(QWidget* destination);
+    void jump(QWidget* destination);
 
 protected:
     // 鼠标按下事件
@@ -34,11 +43,9 @@ protected:
 private:
     // 目标窗体指针
     QWidget* m_DestinationWidget;
-    // 正常状态下的图片指针
-    QPixmap* m_NormalPix;
-    // 被按下状态下的图片指针
-    QPixmap* m_PressPix;
+
     // 是否启用遮罩效果的标志
+    bool isPress;
     bool m_MaskStatus;
 };
 

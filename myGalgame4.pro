@@ -61,10 +61,12 @@ SOURCES += \
     TOOLS/musicplayer.cpp \
     TOOLS/nowachievement.cpp \
     TOOLS/storyshowlabel.cpp \
+    TOOLS/updater.cpp \
     UI/SPECIAL/ripple.cpp \
     UI/SPECIAL/rippleeffect.cpp \
     UI/jumplabel.cpp \
     UI/menuwidget.cpp \
+    UI/style.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -104,10 +106,12 @@ HEADERS += \
     TOOLS/musicplayer.h \
     TOOLS/nowachievement.h \
     TOOLS/storyshowlabel.h \
+    TOOLS/updater.h \
     UI/SPECIAL/ripple.h \
     UI/SPECIAL/rippleeffect.h \
     UI/jumplabel.h \
     UI/menuwidget.h \
+    UI/style.h \
     mainwindow.h
 
 FORMS += \

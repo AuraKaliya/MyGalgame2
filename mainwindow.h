@@ -10,6 +10,7 @@
 #include "TOOLS/musicplayer.h"
 #include "UI/SPECIAL/rippleeffect.h"
 #include "UI/SPECIAL/ripple.h"
+#include "TOOLS/updater.h"
 
 #include <QDebug>
 
@@ -18,6 +19,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QCursor>
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QTimer>
 
 #pragma execution_character_set("utf-8")
 QT_BEGIN_NAMESPACE
@@ -45,12 +49,18 @@ public:
 public slots:
 
    bool	 event(QEvent *event) override;
+   void paintEvent(QPaintEvent * event) override;
+   void showEvent(QShowEvent *e)override;
+
 protected slots:
 
 private:
 
     Ui::MainWindow *ui;
 
+    QStackedWidget* m_rootWidget;
+    QTimer * updateTimer;
+    bool paintFlag;
     //DATA检查-更新
     void dataCheck();
 

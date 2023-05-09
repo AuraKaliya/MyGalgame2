@@ -11,7 +11,37 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-  this->setStyleSheet("background-color:black;");
+    paintFlag=false;
+    updateTimer=new QTimer(this);
+    updateTimer->setInterval(33);
+    connect(updateTimer,&QTimer::timeout,this,[=](){
+        Updater::getInstance()->updateJumpLabel();
+    });
+    updateTimer->start();
+
+    // this->setStyleSheet("background-color:black;");
+    //setWindowFlags(Qt::FramelessWindowHint);
+    setStatusBar(nullptr);
+    setFixedSize(1600,900);
+    MenuWidget::getInstance(this->centralWidget());
+    MenuWidget::getInstance()->resize(1600,900);
+    MenuWidget::getInstance()->move(0,0);
+    MenuWidget::getInstance()->setWindowFlags(Qt::FramelessWindowHint);
+    MenuWidget::getInstance()->setVisible(true);
+//    m_rootWidget=new QStackedWidget(this->centralWidget());
+//    m_rootWidget->setFixedSize(1600,900);
+//    m_rootWidget->move(0,0);
+
+//    QVBoxLayout *layout = new QVBoxLayout(this->centralWidget());
+//    layout->addWidget(m_rootWidget);
+
+
+//    m_rootWidget->addWidget(MenuWidget::getInstance());
+//    m_rootWidget->setCurrentWidget(MenuWidget::getInstance());
+//    m_rootWidget->currentWidget()->setWindowFlags(Qt::FramelessWindowHint);
+
+
+
   //  SQLiteSolve::instance();
 
 
@@ -106,11 +136,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+    QString path("F:\\QTF\\myGalgame4\\RESOURCE\\MenuWidgetSetting.json");
+    JSReader Reader1;
+    Reader1.init();
+    Reader1.setFilePath(path);
+    qDebug()<<"22";
+    Reader1.readJsonFileToMenuWidget();
 
-
-
-
-
+    for(auto it:MenuWidget::getInstance()->m_jumpGroup)
+        qDebug()<<it->isVisible();
 }
 
 MainWindow::~MainWindow()
@@ -121,15 +155,51 @@ MainWindow::~MainWindow()
 
 bool MainWindow::event(QEvent *event)
 {
+
     if(event->type()==QEvent::MouseButtonPress)
     {
-        qDebug()<<"PRESS!!";
+        //在鼠标点击位置展示水波纹效果
+        qDebug()<<"RIPPLE";
         Ripple *rip=new Ripple;
         rip->move(QCursor::pos());
         rip->setColor(QColor(255,120,0,255));
-
         rip->show();
+
     }
-    return true;
+
+
+//
+//    Updater::getInstance()->updateJumpLabel();
+//    this->setAttribute(Qt::WA_Mapped);
+//    QSize oldSize=this->size();
+//    resize(oldSize+QSize(10,10));
+//    update();
+//    resize(oldSize);
+
+
+     //QCoreApplication::processEvents();
+    return QMainWindow::event(event);
+}
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+//    Updater::getInstance()->updateJumpLabel();
+//     for(auto it: Updater::getInstance()->jumpGroup)
+//        it->setPixmap(*it->m_PressPix);
+
+
+}
+
+void MainWindow::showEvent(QShowEvent *e)
+{
+    this->setAttribute(Qt::WA_Mapped);
+    QWidget::showEvent(e);
+
+//        QSize oldSize=this->size();
+//        resize(oldSize+QSize(10,10));
+//        update();
+//        resize(oldSize);
+
+
 }
 

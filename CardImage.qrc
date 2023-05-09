@@ -15,5 +15,11 @@
         <file>RESOURCE/test_trapezoiform2.png</file>
         <file>RESOURCE/test_trapezoiform3.png</file>
         <file>RESOURCE/test_trapezoiform4.png</file>
+        <file>RESOURCE/test_trapezoiform1_press.png</file>
+        <file>RESOURCE/test_trapezoiform2_press.png</file>
+        <file>RESOURCE/test_trapezoiform3_press.png</file>
+        <file>RESOURCE/test_trapezoiform4_press.png</file>
+        <file>RESOURCE/test_Title.png</file>
+        <file>RESOURCE/test_Background.png</file>
     </qresource>
 </RCC>

@@ -9,6 +9,8 @@ JumpLabel::JumpLabel(QWidget* parent)
 {
     // 默认不启用遮罩效果
     m_MaskStatus=false;
+    setScaledContents(true);
+    isPress=false;
 }
 
 // 设置跳转窗体的指针
@@ -26,11 +28,13 @@ void JumpLabel::setPixmapGroup(QPixmap* normal, QPixmap* press)
     m_PressPix = press;
     // 设置标签的图片为正常状态下的图片
     setPixmap(m_NormalPix->scaled(width(),height()));
+
 }
 
 // 设置是否启用遮罩效果
 void JumpLabel::setMaskStatus(bool flag)
 {
+    qDebug()<<"setMask:"<<flag;
     // 记录是否启用遮罩效果的标志
     m_MaskStatus=flag;
     // 如果启用，并且正常状态下和被按下状态下的图片都不为空
@@ -41,27 +45,49 @@ void JumpLabel::setMaskStatus(bool flag)
     }
 }
 
+bool JumpLabel::isPressed()
+{
+    return isPress;
+}
+
+void JumpLabel::updatePix()
+{
+    qDebug()<<"updatePix";
+    if(isPress)
+    {
+        setPixmap(m_PressPix->scaled(width(),height()));
+    }else {
+        setPixmap(m_NormalPix->scaled(width(),height()));
+    }
+}
+
 // 鼠标按下事件
 void JumpLabel::mousePressEvent(QMouseEvent* event)
 {
+    qDebug()<<"mousePressEvent";
+
     if (m_PressPix) {
         // 设置标签的图片为被按下状态下的图片
         if(m_MaskStatus){
             setMask(m_PressPix->mask());
+
         }
-        setPixmap(m_PressPix->scaled(width(),height()));
+        isPress=true;
+       // setPixmap(m_PressPix->scaled(width(),height()));
+
     }
 
     if (event->button() == Qt::LeftButton && event->type() == QEvent::MouseButtonRelease) {
         // 发送无参数的点击信号
         emit clicked();
-
+        emit  jump(m_DestinationWidget);
         if (m_DestinationWidget) {
             // 发送带一个参数指向目标窗体的点击信号
             emit clicked(m_DestinationWidget);
+            emit  jump(m_DestinationWidget);
         }
     }
-
+    QCoreApplication::postEvent(parentWidget(), new QEvent(QEvent::User));
     QLabel::mousePressEvent(event);
 }
 
@@ -72,10 +98,11 @@ void JumpLabel::mouseReleaseEvent(QMouseEvent* event)
         // 设置标签的图片为正常状态下的图片
         if(m_MaskStatus){
             setMask(m_NormalPix->mask());
+
         }
-
-        setPixmap(m_NormalPix->scaled(width(),height()));
+        isPress=false;
+        // setPixmap(m_NormalPix->scaled(width(),height()));
     }
-
+    // QCoreApplication::postEvent(parentWidget(), new QEvent(QEvent::User));
     QLabel::mouseReleaseEvent(event);
 }
