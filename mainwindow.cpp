@@ -6,28 +6,59 @@
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QStackedWidget(parent)
     , ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
 
-    paintFlag=false;
+    //ui->setupUi(this);
+
+    //paintFlag=false;
+
+    /**timer和更新器**//**timer和更新器**//**timer和更新器**//**timer和更新器**/
     updateTimer=new QTimer(this);
     updateTimer->setInterval(33);
     connect(updateTimer,&QTimer::timeout,this,[=](){
         Updater::getInstance()->updateJumpLabel();
     });
     updateTimer->start();
+    /**timer和更新器**//**timer和更新器**//**timer和更新器**//**timer和更新器**/
 
     // this->setStyleSheet("background-color:black;");
     //setWindowFlags(Qt::FramelessWindowHint);
-    setStatusBar(nullptr);
+
+    /**对主窗体的样式设置**//**对主窗体的样式设置**//**对主窗体的样式设置**//**对主窗体的样式设置**/
+    //setStatusBar(nullptr);
     setFixedSize(1600,900);
-    MenuWidget::getInstance(this->centralWidget());
+    /**对主窗体的样式设置**//**对主窗体的样式设置**//**对主窗体的样式设置**//**对主窗体的样式设置**/
+
+
+    /**实例化菜单窗体**/ /**实例化菜单窗体**/ /**实例化菜单窗体**/ /**实例化菜单窗体**/ /**实例化菜单窗体**/
+    MenuWidget::getInstance(this);
     MenuWidget::getInstance()->resize(1600,900);
     MenuWidget::getInstance()->move(0,0);
     MenuWidget::getInstance()->setWindowFlags(Qt::FramelessWindowHint);
     MenuWidget::getInstance()->setVisible(true);
+     /**实例化菜单窗体**/ /**实例化菜单窗体**/ /**实例化菜单窗体**/ /**实例化菜单窗体**/ /**实例化菜单窗体**/
+
+    /**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**/
+    SettingWidget::getInstance(this);
+    SettingWidget::getInstance()->resize(1600,900);
+    SettingWidget::getInstance()->move(0,0);
+    SettingWidget::getInstance()->setWindowFlags(Qt::FramelessWindowHint);
+    SettingWidget::getInstance()->setVisible(true);
+    /**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**/
+    Style::getInstance();
+
+    addWidget(MenuWidget::getInstance());
+    addWidget(SettingWidget::getInstance());
+    Updater::getInstance()->registerWidget("设置",SettingWidget::getInstance());
+    Updater::getInstance()->registerParent(SettingWidget::getInstance(),this);
+
+
+
+
+
+
 //    m_rootWidget=new QStackedWidget(this->centralWidget());
 //    m_rootWidget->setFixedSize(1600,900);
 //    m_rootWidget->move(0,0);
@@ -135,16 +166,45 @@ MainWindow::MainWindow(QWidget *parent)
     //connect(this,SIGNAL(mousePressEvent), this, SLOT(pressevent(QMouseEvent *event)));
 
 
+////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据
 
-    QString path("F:\\QTF\\myGalgame4\\RESOURCE\\MenuWidgetSetting.json");
+///
     JSReader Reader1;
     Reader1.init();
+
+
+/// Style数据
+    QString path("F:\\QTF\\myGalgame4\\RESOURCE\\Style.json");
     Reader1.setFilePath(path);
-    qDebug()<<"22";
+    Reader1.readJsonFileToStyle();
+
+
+/// MenuWidget页面数据
+    path=QString("F:\\QTF\\myGalgame4\\RESOURCE\\MenuWidgetSetting.json");
+    Reader1.setFilePath(path);
     Reader1.readJsonFileToMenuWidget();
 
-    for(auto it:MenuWidget::getInstance()->m_jumpGroup)
-        qDebug()<<it->isVisible();
+
+
+
+
+
+    // 测试setting
+     path=QString("F:\\QTF\\myGalgame4\\RESOURCE\\SettingWidget.json");
+     Reader1.setFilePath(path);
+     Reader1.readJsonFileToSetting();
+
+
+
+
+////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据
+
+
+  setCurrentWidget(MenuWidget::getInstance());
+
+
+
+
 }
 
 MainWindow::~MainWindow()
@@ -178,7 +238,7 @@ bool MainWindow::event(QEvent *event)
 
 
      //QCoreApplication::processEvents();
-    return QMainWindow::event(event);
+    return QStackedWidget::event(event);
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -201,5 +261,25 @@ void MainWindow::showEvent(QShowEvent *e)
 //        resize(oldSize);
 
 
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *e)
+{
+
+    if(e->key()==Qt::Key_Q)
+    {
+        toMenuWidget();
+    }
+
+}
+
+void MainWindow::updateLastWidget(QWidget *w)
+{
+    m_lastWidget=w;
+}
+
+void MainWindow::toMenuWidget()
+{
+    this->setCurrentWidget(MenuWidget::getInstance());
 }
 

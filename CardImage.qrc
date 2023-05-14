@@ -21,5 +21,27 @@
         <file>RESOURCE/test_trapezoiform4_press.png</file>
         <file>RESOURCE/test_Title.png</file>
         <file>RESOURCE/test_Background.png</file>
+        <file>RESOURCE/test_Title2.png</file>
+        <file>RESOURCE/test_object1.png</file>
+        <file>RESOURCE/test_object2.png</file>
+        <file>RESOURCE/test_transparency.png</file>
+        <file>RESOURCE/test_choiceIcon.png</file>
+        <file>RESOURCE/test_Background2.png</file>
+        <file>RESOURCE/test_choiceLabel.png</file>
+        <file>RESOURCE/test_sliderVue.png</file>
+        <file>RESOURCE/test_choiceLabel2.png</file>
+        <file>RESOURCE/test_settingOption.png</file>
+        <file>RESOURCE/test_settingOption2.png</file>
+        <file>RESOURCE/test_settingOption3.png</file>
+        <file>RESOURCE/test_transparency2.png</file>
+        <file>RESOURCE/test_transparency3.png</file>
+        <file>RESOURCE/test_transparency4.png</file>
+        <file>RESOURCE/test_SR_object1.png</file>
+        <file>RESOURCE/test_SR_object2.png</file>
+        <file>RESOURCE/test_SR_object3.png</file>
+        <file>RESOURCE/test_SR_object3_2.png</file>
+        <file>RESOURCE/test_SR_object4.png</file>
+        <file>RESOURCE/test_SR_object4_2.png</file>
+        <file>RESOURCE/test_SR_object5.png</file>
     </qresource>
 </RCC>

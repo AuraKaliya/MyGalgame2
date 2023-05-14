@@ -64,8 +64,12 @@ SOURCES += \
     TOOLS/updater.cpp \
     UI/SPECIAL/ripple.cpp \
     UI/SPECIAL/rippleeffect.cpp \
+    UI/chievementwidget.cpp \
+    UI/choicelabel.cpp \
     UI/jumplabel.cpp \
     UI/menuwidget.cpp \
+    UI/rswidget.cpp \
+    UI/settingwidget.cpp \
     UI/style.cpp \
     main.cpp \
     mainwindow.cpp
@@ -109,8 +113,12 @@ HEADERS += \
     TOOLS/updater.h \
     UI/SPECIAL/ripple.h \
     UI/SPECIAL/rippleeffect.h \
+    UI/chievementwidget.h \
+    UI/choicelabel.h \
     UI/jumplabel.h \
     UI/menuwidget.h \
+    UI/rswidget.h \
+    UI/settingwidget.h \
     UI/style.h \
     mainwindow.h
 
