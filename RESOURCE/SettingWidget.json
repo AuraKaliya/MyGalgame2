@@ -1,0 +1,58 @@
+{
+    "ChoiceWidgetLabelGroup": [
+        {
+            "Text": "声音设置",
+            "NormalPix": ":/UI/RESOURCE/test_choiceLabel.png",
+            "PressPix": ":/UI/RESOURCE/test_choiceLabel.png",
+            "Mask": true,
+            "FixedSize": [280, 100]
+        },
+        {
+            "Text": "文本设置",
+            "NormalPix": ":/UI/RESOURCE/test_choiceLabel.png",
+            "PressPix": ":/UI/RESOURCE/test_choiceLabel.png",
+            "Mask": true,
+            "FixedSize": [280, 100]
+        }
+    ],
+ 
+    "WidgetGroup": [
+        {
+            "WidgetName": "声音设置",
+            "Slider": [
+                {
+                    "Name": "背景音乐",
+                    "Default": 50,
+                    "MinValue": 0,
+                    "MaxValue": 100
+                }
+            ],
+            "Choice": [
+                {
+                    "Name": "点击音效",
+                    "Default": 0,
+                    "Values": ["开启", "关闭"]
+                }
+            ]
+        },
+        {
+            "WidgetName": "文本设置",
+            "Choice": [
+                {
+                    "Name": "文本速度",
+                    "Default": 0,
+                    "Values": ["0.5", "1.0"]
+                }
+            ]
+        }
+    ],
+    "title2": "设置选项",
+    "title1": "莉莉安的魔法屋",
+    "obj_settingName":":/UI/RESOURCE/test_object1.png",
+    "obj_settingValue":":/UI/RESOURCE/test_object2.png",
+    "obj_Option":":/UI/RESOURCE/test_settingOption.png",
+    "obj_Choice": ":/UI/RESOURCE/test_sliderVue.png",
+    "choiceIcon": ":/UI/RESOURCE/test_choiceIcon.png",
+    "choicedLabel": ":/UI/RESOURCE/test_choiceLabel2.png",
+    "backgroundImage": ":/UI/RESOURCE/test_Background2.png"
+}

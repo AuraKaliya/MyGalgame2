@@ -1,0 +1,12 @@
+{
+    "StyleName": "灰度生活",
+    "background_image1":"border-image:url(:/UI/RESOURCE/test_transparency.png);",
+    "background_image2":"border-image:url(:/UI/RESOURCE/test_transparency2.png);",
+    "background_image3":"border-image:url(:/UI/RESOURCE/test_transparency3.png);",
+    "background_image4":"border-image:url(:/UI/RESOURCE/test_transparency4.png);",
+    "Label_border_style":"border:1px solid white;",
+    "Label_border_radius":"border-radius:20%;",
+    "Label_text_style1": "color:white;font-size:25px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style2": "color:white;font-size:35px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style3": "color:red;font-size:55px;font-style:italic;font-family:\"楷体\";"
+}

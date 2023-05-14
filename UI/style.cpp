@@ -2,154 +2,74 @@
 
 Style* Style::m_instance = nullptr;
 
-Style* Style::getInstance(QObject *parent)
+Style::Style(QObject *parent) : QObject(parent),
+    m_styleName(""),
+    m_btnStyle(""),
+    m_backgroundImage1(""),
+    m_backgroundImage2(""),
+    m_backgroundImage3(""),
+    m_backgroundImage4(""),
+    m_labelBorderStyle(""),
+    m_labelBorderRadius(""),
+    m_labelTextStyle1(""),
+    m_labelTextStyle2(""),
+    m_labelTextStyle3("")
 {
-    if (m_instance == nullptr)
-    {
-        // 在第一次调用时创建唯一实例
-        m_instance = new Style(parent);
-    }
-    return m_instance;
-}
 
-Style::Style(QObject *parent)
-    : QObject{parent}
-    , m_styleName{"Default"}
-    , m_btnStyle{"background-color: #F0F0F0; color: #333; border: none; padding: 6px 12px;"}
-    , m_primaryLabel{QColor(0, 0, 0)}
-    , m_background{QColor(255, 255, 255)}
-    , m_icon{QColor(0, 0, 0)}
-    , m_textDeep{QColor(51, 51, 51)}
-    , m_textShoal{QColor(119, 119, 119)}
-    , m_textHighLight{QColor(26, 115, 232)}
-    , m_mainLabel{QColor("#F0F0F0")}
-{
-    // 初始化默认值
 }
 
 Style::~Style()
 {
-    // 删除唯一实例
-    m_instance = nullptr;
+
 }
 
-QString Style::styleName() const
+Style* Style::getInstance(QObject *parent)
 {
-    return m_styleName;
+    if (m_instance == nullptr)
+    {
+        m_instance = new Style(parent);
+    }
+
+    return m_instance;
 }
 
-void Style::setStyleName(const QString& styleName)
+void Style::reset(QMap<QString, QString> style)
 {
-    m_styleName = styleName;
-    // 发送信号，通知组件更新样式
-    // emit styleChanged();
+    m_styleName = style["StyleName"];
+    m_backgroundImage1 = style["background_image1"];
+    m_backgroundImage2 = style["background_image2"];
+    m_backgroundImage3 = style["background_image3"];
+    m_backgroundImage4 = style["background_image4"];
+    m_labelBorderStyle = style["Label_border_style"];
+    m_labelBorderRadius = style["Label_border_radius"];
+    m_labelTextStyle1 = style["Label_text_style1"];
+    m_labelTextStyle2 = style["Label_text_style2"];
+    m_labelTextStyle3 = style["Label_text_style3"];
+
+    styleDictionary=style;
+    emit styleChanged();
 }
 
-QString Style::btnStyle() const
+void Style::setLabelStyle(QLabel *label, int imageStyle, int textStyle)
 {
-    return m_btnStyle;
+
+    QString styleSheet="";
+
+    styleSheet+=styleDictionary.value(QString("background_image"+QString::number(imageStyle)));
+    styleSheet+=styleDictionary.value(QString("Label_text_style"+QString::number(textStyle)));
+
+    styleSheet+=m_labelBorderStyle;
+    styleSheet+=m_labelBorderRadius;
+    qDebug()<<styleSheet;
+    label->setStyleSheet(styleSheet);
 }
 
-void Style::setBtnStyle(const QString& btnStyle)
+void Style::setWidgetBackground(QWidget *widget, int imageStyle)
 {
-    m_btnStyle = btnStyle;
-    // 发送信号，通知组件更新样式
-  //  emit styleChanged();
-}
-
-QColor Style::primaryLabel() const
-{
-    return m_primaryLabel;
-}
-
-void Style::setPrimaryLabel(const QColor& primaryLabel)
-{
-    m_primaryLabel = primaryLabel;
-    // 发送信号，通知组件更新样式
-   // emit styleChanged();
-}
-
-QColor Style::background() const
-{
-    return m_background;
-}
-
-void Style::setBackground(const QColor& background)
-{
-    m_background = background;
-    // 发送信号，通知组件更新样式
-   // emit styleChanged();
-}
-
-QColor Style::icon() const
-{
-    return m_icon;
-}
-
-void Style::setIcon(const QColor& icon)
-{
-    m_icon = icon;
-    // 发送信号，通知组件更新样式
-    //emit styleChanged();
-}
-
-QColor Style::textDeep() const
-{
-    return m_textDeep;
-}
-
-void Style::setTextDeep(const QColor& textDeep)
-{
-    m_textDeep = textDeep;
-    // 发送信号，通知组件更新样式
-   // emit styleChanged();
-}
-
-QColor Style::textShoal() const
-{
-    return m_textShoal;
-}
-
-void Style::setTextShoal(const QColor& textShoal)
-{
-    m_textShoal = textShoal;
-    // 发送信号，通知组件更新样式
-  //  emit styleChanged();
-}
-
-QColor Style::textHighLight() const
-{
-    return m_textHighLight;
-}
-
-void Style::setTextHighLight(const QColor& textHighLight)
-{
-    m_textHighLight = textHighLight;
-    // 发送信号，通知组件更新样式
-   // emit styleChanged();
-}
-
-QColor Style::mainLabel() const
-{
-    return m_mainLabel;
-}
-
-void Style::setMainLabel(const QColor& mainLabel)
-{
-    m_mainLabel = mainLabel;
-    // 发送信号，通知组件更新样式
-   // emit styleChanged();
-}
-
-void Style::reset(QMap<QString,QString> style)
-{
-    setStyleName(style.value("StyleName"));
-    setBtnStyle(style.value("BtnStyle"));
-    setPrimaryLabel(QColor(style.value("PrimaryLabel")));
-    setBackground(QColor(style.value("Background")));
-    setIcon(QColor(style.value("Icon")));
-    setTextDeep(QColor(style.value("TextDeep")));
-    setTextShoal(QColor(style.value("TextShoal")));
-    setTextHighLight(QColor(style.value("TextHighLight")));
-    setMainLabel(QColor(style.value("MainLabel")));
+    widget->setWindowFlags(Qt::FramelessWindowHint);
+    QString styleSheet="";
+    styleSheet+=styleDictionary.value(QString("background_image"+QString::number(imageStyle)));
+    styleSheet+=m_labelBorderRadius;
+    qDebug()<<styleSheet;
+    widget->setStyleSheet(styleSheet);
 }

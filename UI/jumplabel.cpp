@@ -11,6 +11,7 @@ JumpLabel::JumpLabel(QWidget* parent)
     m_MaskStatus=false;
     setScaledContents(true);
     isPress=false;
+    focuse = false;
 }
 
 // 设置跳转窗体的指针
@@ -27,8 +28,15 @@ void JumpLabel::setPixmapGroup(QPixmap* normal, QPixmap* press)
     // 记录被按下状态下的图片指针
     m_PressPix = press;
     // 设置标签的图片为正常状态下的图片
-    setPixmap(m_NormalPix->scaled(width(),height()));
+    //  setPixmap(m_NormalPix->scaled(width(),height()));
 
+    setStyleSheet("border-image:url("+m_NormalPixPath+");");
+}
+
+void JumpLabel::setPixmapPathGroup(QString normal, QString press)
+{
+    m_NormalPixPath=normal;
+    m_PressPixPath=press;
 }
 
 // 设置是否启用遮罩效果
@@ -50,14 +58,28 @@ bool JumpLabel::isPressed()
     return isPress;
 }
 
+bool JumpLabel::hasFocused()
+{
+    return focuse;
+}
+
 void JumpLabel::updatePix()
 {
-    qDebug()<<"updatePix";
+
+
+    if(!m_PressPixPath.isEmpty()&&!m_NormalPixPath.isEmpty())
+    {
     if(isPress)
     {
-        setPixmap(m_PressPix->scaled(width(),height()));
+       // setPixmap(m_PressPix->scaled(width(),height()));
+        setStyleSheet("border-image:url("+m_PressPixPath+");");
+      // qDebug()<<"updatePix:Press";
+
     }else {
-        setPixmap(m_NormalPix->scaled(width(),height()));
+        // setPixmap(m_NormalPix->scaled(width(),height()));
+        setStyleSheet("border-image:url("+m_NormalPixPath+");");
+      // qDebug()<<"updatePix:Normal";
+    }
     }
 }
 
@@ -77,16 +99,6 @@ void JumpLabel::mousePressEvent(QMouseEvent* event)
 
     }
 
-    if (event->button() == Qt::LeftButton && event->type() == QEvent::MouseButtonRelease) {
-        // 发送无参数的点击信号
-        emit clicked();
-        emit  jump(m_DestinationWidget);
-        if (m_DestinationWidget) {
-            // 发送带一个参数指向目标窗体的点击信号
-            emit clicked(m_DestinationWidget);
-            emit  jump(m_DestinationWidget);
-        }
-    }
     QCoreApplication::postEvent(parentWidget(), new QEvent(QEvent::User));
     QLabel::mousePressEvent(event);
 }
@@ -94,15 +106,30 @@ void JumpLabel::mousePressEvent(QMouseEvent* event)
 // 鼠标释放事件
 void JumpLabel::mouseReleaseEvent(QMouseEvent* event)
 {
+    isPress=false;
     if (m_NormalPix) {
         // 设置标签的图片为正常状态下的图片
         if(m_MaskStatus){
             setMask(m_NormalPix->mask());
-
         }
-        isPress=false;
         // setPixmap(m_NormalPix->scaled(width(),height()));
     }
     // QCoreApplication::postEvent(parentWidget(), new QEvent(QEvent::User));
+
+    if (event->button() == Qt::LeftButton ) {
+        // 发送无参数的点击信号
+        qDebug()<<"clicked";
+        emit clicked();
+        qDebug()<<"clicked solve";
+        // emit  jump(m_DestinationWidget);
+        if (m_DestinationWidget) {
+            // 发送带一个参数指向目标窗体的点击信号
+            //  emit clicked(m_DestinationWidget);
+            focuse=!focuse;
+            qDebug()<<"m_DestinationWidget:"<<m_DestinationWidget;
+            emit  jump(m_DestinationWidget);
+        }
+    }
+
     QLabel::mouseReleaseEvent(event);
 }

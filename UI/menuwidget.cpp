@@ -28,13 +28,13 @@ void MenuWidget::setBackground(const QPixmap &background)
 
 }
 
-void MenuWidget::setTitle(const QPixmap &title, const QString &name)
+void MenuWidget::setTitle(const QPixmap &title, const QString &name,const QPoint &move)
 {
     m_tiltleImage = new QPixmap(title);
     m_titleLabel = new QLabel(this);
     m_titleLabel->setMask(m_tiltleImage->mask());
     m_titleLabel->setPixmap(*m_tiltleImage);
-    m_titleLabel->move(500, 500);
+    m_titleLabel->move(move);
     qDebug()<<"setTitle";
 }
 
@@ -77,12 +77,16 @@ void MenuWidget::paintEvent(QPaintEvent *event)
 //    }
     QPainter painter(this);
     painter.drawPixmap(QRect(0,0,width(),height()),*m_backgroundImage);
-
-
 }
 
 void MenuWidget::showEvent(QShowEvent *event)
 {
     this->setAttribute(Qt::WA_Mapped);
     QWidget::showEvent(event);
+}
+
+void MenuWidget::addLabelInfo(QString text, QPoint pos)
+{
+    m_labelInfo.append(QPair<QString,QPoint>(text,pos));
+
 }

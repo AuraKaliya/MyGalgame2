@@ -1,0 +1,22 @@
+{
+"Achievement":
+[
+{
+"ID":10100111,
+"Path":"F:\QTF\myGalgame4\RESOURCE\Achievement1.json",
+"CreateTime":"2023-04-29 04:36:11",
+"UpdateTime":"2023-04-29 14:21:34",
+"StroyProgress":"梦中的商场",
+"GameLevel":"普通",
+"Emblem1":"none",
+"Emblem2":"none",
+"Emblem3":"none"
+}
+],
+"ChoiceLabelImage":":/UI/RESOURCE/test_SR_object1.png",
+"AchMainShowLabelPix":":/UI/RESOURCE/test_SR_object2.png",
+"AchReadNormal":":/UI/RESOURCE/test_SR_object3.png",
+"AchReadPress":":/UI/RESOURCE/test_SR_object3_2.png",
+"AchSaveNormal":":/UI/RESOURCE/test_SR_object4.png",
+"AchSavePress":":/UI/RESOURCE/test_SR_object4_2.png"
+}

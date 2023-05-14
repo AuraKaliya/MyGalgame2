@@ -19,25 +19,27 @@ public:
     static MenuWidget *getInstance(QWidget *parent = nullptr);
 
     void setBackground(const QPixmap &background);
-    void setTitle(const QPixmap &title, const QString &name);
+    void setTitle(const QPixmap &title, const QString &name,const QPoint &move);
     void setVersion(const QString &version);
     void clearJumpGroup();
     void addJumpLabel(JumpLabel *jumpLabel);
     void customEvent(QEvent * even) override;
     void paintEvent(QPaintEvent* event) override;
     void showEvent(QShowEvent *event) override;
-    QVector<JumpLabel*> m_jumpGroup;
+    void addLabelInfo(QString text,QPoint pos);
+
 private:
     explicit MenuWidget(QWidget *parent = nullptr);
     static MenuWidget *m_instance;
 
-
+    QVector<JumpLabel*> m_jumpGroup;
     QPixmap *m_backgroundImage;
-
     QPixmap *m_tiltleImage;
     QLabel * m_titleLabel;
-
     QLabel * m_versionLabel;
+
+    QVector<QPair<QString,QPoint>> m_labelInfo;
+
 
 signals:
 

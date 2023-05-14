@@ -9,8 +9,9 @@
 #include "musicplayer.h"
 #include "../UI/style.h"
 #include "../UI/menuwidget.h"
-
-
+#include "../UI/settingwidget.h"
+#include "../UI/chievementwidget.h"
+#include "../UI/rswidget.h"
 
 #include <QObject>
 #include <QVector>
@@ -22,6 +23,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QSlider>
 
 
 
@@ -36,6 +38,8 @@ public:
     void readJsonFileToMusicPlayer();  //读取JSON文件内容到MusicPlayer中
     void readJsonFileToStyle();
     void readJsonFileToMenuWidget();
+    void readJsonFileToSetting();
+    void readJsonFileToReadAndSave();
     QVector<Character*>readJsonFileToCharacter(); //读取JSON文件内容并返回
 
 
@@ -52,6 +56,9 @@ private:
     NowAchievement * m_achievement;
     MusicPlayer * m_musicPlayer;
     MenuWidget * m_menuWidget;
+    SettingWidget * m_settingWidget;
+    RSWidget * m_rsWidget;
+
 signals:
     void deckInfoUpdated(const QVector<QVector<QString> >& deckInfo);
 

@@ -17,21 +17,19 @@ public:
     void setDestination(QWidget* destination);
     // 设置正常状态和被按下状态下的图片
     void setPixmapGroup(QPixmap* normal, QPixmap* press);
+    void setPixmapPathGroup(QString normal,QString press);
     // 设置是否启用遮罩效果
     void setMaskStatus(bool flag);
     bool isPressed();
+    bool hasFocused();
     void updatePix();
 
-    // 正常状态下的图片指针
-    QPixmap* m_NormalPix;
-    // 被按下状态下的图片指针
-    QPixmap* m_PressPix;
 
 signals:
     // 点击信号，无参数
     void clicked();
     // 点击信号，带一个参数指向目标窗体
-    void clicked(QWidget* destination);
+    // void clicked(QWidget* destination);
     void jump(QWidget* destination);
 
 protected:
@@ -44,9 +42,21 @@ private:
     // 目标窗体指针
     QWidget* m_DestinationWidget;
 
+    //
+    QString m_NormalPixPath;
+    QString m_PressPixPath;
+
+    // 正常状态下的图片指针
+    QPixmap* m_NormalPix;
+    // 被按下状态下的图片指针
+    QPixmap* m_PressPix;
+
     // 是否启用遮罩效果的标志
     bool isPress;
+    bool focuse;
     bool m_MaskStatus;
+
 };
+
 
 #endif // JUMPLABEL_H
