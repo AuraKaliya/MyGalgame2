@@ -1,0 +1,17 @@
+Character：
+
+tachie：  1.  	无背景 900X1600						Character_[CharacterName]_Tachie
+	   2. 	带背景 900X1600	灰色背景（RGB(145,145,145)）	Character_[CharacterName]_TachieB
+cardImage： 	1.	卡片图 90X120 +米黄背景（RGB(255,242,234)）		Character_[CharacterName]_CardPix
+		2.	小图 70X70 带黑圈						Character_[CharacterName]_CardSmallPix
+
+
+
+
+
+
+表情差分替换：
+		开心：happy,smile,open mouth, 			|close eyes
+		愤怒：annoyed,grit one's teeth,
+		害羞：(shy), (blush), full-face blush
+		失落：disappointed, sad,((depressed)), 

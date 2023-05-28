@@ -47,15 +47,58 @@ MainWindow::MainWindow(QWidget *parent)
     SettingWidget::getInstance()->setWindowFlags(Qt::FramelessWindowHint);
     SettingWidget::getInstance()->setVisible(true);
     /**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**//**实例化设置窗体**/
+
+    /**实例化存读窗体**//**实例化存读窗体**//**实例化存读窗体**//**实例化存读窗体**//**实例化存读窗体**/
+    RSWidget::getInstance(this);
+    RSWidget::getInstance()->resize(1600,900);
+    RSWidget::getInstance()->move(0,0);
+    RSWidget::getInstance()->setWindowFlags(Qt::FramelessWindowHint);
+    RSWidget::getInstance()->setVisible(true);
+    /**实例化存读窗体**//**实例化存读窗体**//**实例化存读窗体**//**实例化存读窗体**/
+
+    /**实例化主界面窗体**//**实例化主界面窗体**//**实例化主界面窗体**//**实例化主界面窗体**//**实例化主界面窗体**/
+    MainWidget::getInstance(this);
+    MainWidget::getInstance()->resize(1600,900);
+    MainWidget::getInstance()->move(0,0);
+    MainWidget::getInstance()->setWindowFlags(Qt::FramelessWindowHint);
+    MainWidget::getInstance()->setVisible(true);
+
+
+    /**实例化主界面窗体**//**实例化主界面窗体**//**实例化主界面窗体**//**实例化主界面窗体**//**实例化主界面窗体**/
+
+
+   /**实例化角色界面窗体**//**实例化角色界面窗体**//**实例化角色界面窗体**//**实例化角色界面窗体**//**实例化角色界面窗体**/
+    CharacterWidget::getInstance(this);
+    CharacterWidget::getInstance()->resize(1600,900);
+    CharacterWidget::getInstance()->move(0,0);
+    CharacterWidget::getInstance()->setWindowFlags(Qt::FramelessWindowHint);
+    CharacterWidget::getInstance()->setVisible(true);
+   /**实例化角色界面窗体**//**实例化角色界面窗体**//**实例化角色界面窗体**//**实例化角色界面窗体**//**实例化角色界面窗体**/
+
+
+
+
+
     Style::getInstance();
+    CharacterHub::getInstance();
 
     addWidget(MenuWidget::getInstance());
     addWidget(SettingWidget::getInstance());
+    addWidget(RSWidget::getInstance());
+    addWidget( MainWidget::getInstance());
+    addWidget(CharacterWidget::getInstance());
+
     Updater::getInstance()->registerWidget("设置",SettingWidget::getInstance());
     Updater::getInstance()->registerParent(SettingWidget::getInstance(),this);
 
+    Updater::getInstance()->registerWidget("读取",RSWidget::getInstance());
+    Updater::getInstance()->registerParent(RSWidget::getInstance(),this);
 
+    Updater::getInstance()->registerWidget("启航",MainWidget::getInstance());
+    Updater::getInstance()->registerParent(MainWidget::getInstance(),this);
 
+    Updater::getInstance()->registerWidget("角色一览",CharacterWidget::getInstance());
+    Updater::getInstance()->registerParent(CharacterWidget::getInstance(),this);
 
 
 
@@ -168,32 +211,57 @@ MainWindow::MainWindow(QWidget *parent)
 
 ////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据////载入数据
 
+    QString path1="D:\\QTF\\myGalgame4\\RESOURCE\\";
 ///
     JSReader Reader1;
     Reader1.init();
 
 
+///
+
+
+
+
+
 /// Style数据
-    QString path("F:\\QTF\\myGalgame4\\RESOURCE\\Style.json");
+    QString path(path1+"Style.json");
     Reader1.setFilePath(path);
     Reader1.readJsonFileToStyle();
 
 
+///
+    path=QString(path1+"Character1.json");
+    Reader1.setFilePath(path);
+    CharacterHub::getInstance()->initCharaHub(Reader1.readJsonFileToCharacter());
+    CharacterHub::getInstance()->show();
+
 /// MenuWidget页面数据
-    path=QString("F:\\QTF\\myGalgame4\\RESOURCE\\MenuWidgetSetting.json");
+    path=QString(path1+"MenuWidgetSetting.json");
     Reader1.setFilePath(path);
     Reader1.readJsonFileToMenuWidget();
 
 
-
-
-
-
-    // 测试setting
-     path=QString("F:\\QTF\\myGalgame4\\RESOURCE\\SettingWidget.json");
+    // 测试setting ---√
+/// SettingWidget页面数据
+     path=QString(path1+"SettingWidget.json");
      Reader1.setFilePath(path);
      Reader1.readJsonFileToSetting();
 
+
+     //测试存读档  ---√
+     path=QString(path1+"Achievement_ALL.json");
+     Reader1.setFilePath(path);
+     Reader1.readJsonFileToReadAndSave();
+
+    //测试MainWidget页面数据
+     path=QString(path1+"MainWidget.json");
+     Reader1.setFilePath(path);
+     Reader1.readJsonFileToMainWidget();
+
+    //测试CharacterWidget页面数据
+     path=QString(path1+"CharacterWidget.json");
+     Reader1.setFilePath(path);
+     Reader1.readJsonFileToCharacterWidget();
 
 
 
@@ -204,6 +272,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+
+
+  //test-----页面
+
+  StoryInfoWidget * stInfo=new StoryInfoWidget();
+  stInfo->initTachie(CharacterHub::getInstance()->findCharacter(10002),QRect(0,0,360,640));
+  stInfo->initStory(CharacterHub::getInstance()->findCharacter(10002)->storyTitle(),CharacterHub::getInstance()->findCharacter(10002)->story());
+
+  stInfo->show();
 
 }
 

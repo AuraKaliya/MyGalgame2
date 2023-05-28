@@ -7,11 +7,13 @@ JumpLabel::JumpLabel(QWidget* parent)
     , m_NormalPix(nullptr)
     , m_PressPix(nullptr)
 {
+    m_NormalPixPath="";
     // 默认不启用遮罩效果
     m_MaskStatus=false;
     setScaledContents(true);
     isPress=false;
     focuse = false;
+    cardID=0;
 }
 
 // 设置跳转窗体的指针
@@ -37,6 +39,9 @@ void JumpLabel::setPixmapPathGroup(QString normal, QString press)
 {
     m_NormalPixPath=normal;
     m_PressPixPath=press;
+    setStyleSheet("border-image:url("+m_NormalPixPath+");");
+    m_NowPixPath=m_NormalPixPath;
+    m_NextPixPath=m_PressPixPath;
 }
 
 // 设置是否启用遮罩效果
@@ -73,20 +78,32 @@ void JumpLabel::updatePix()
     {
        // setPixmap(m_PressPix->scaled(width(),height()));
         setStyleSheet("border-image:url("+m_PressPixPath+");");
+       m_NowPixPath=m_PressPixPath;
+        m_NextPixPath=m_NormalPixPath;
       // qDebug()<<"updatePix:Press";
 
     }else {
         // setPixmap(m_NormalPix->scaled(width(),height()));
         setStyleSheet("border-image:url("+m_NormalPixPath+");");
+       m_NowPixPath=m_NormalPixPath;
+        m_NextPixPath=m_PressPixPath;
       // qDebug()<<"updatePix:Normal";
     }
     }
 }
 
+void JumpLabel::changePix()
+{
+    setStyleSheet("border-image:url("+m_NextPixPath+");");
+    QString tmpPath=m_NowPixPath;
+    m_NowPixPath=m_NextPixPath;
+    m_NextPixPath=tmpPath;
+}
+
 // 鼠标按下事件
 void JumpLabel::mousePressEvent(QMouseEvent* event)
 {
-    qDebug()<<"mousePressEvent";
+   // qDebug()<<"mousePressEvent";
 
     if (m_PressPix) {
         // 设置标签的图片为被按下状态下的图片
@@ -118,10 +135,15 @@ void JumpLabel::mouseReleaseEvent(QMouseEvent* event)
 
     if (event->button() == Qt::LeftButton ) {
         // 发送无参数的点击信号
-        qDebug()<<"clicked";
+       // qDebug()<<"clicked";
         emit clicked();
-        qDebug()<<"clicked solve";
+       // qDebug()<<"clicked solve";
         // emit  jump(m_DestinationWidget);
+        if(cardID!=0)
+        {
+            emit choiceCard(cardID);
+        }
+
         if (m_DestinationWidget) {
             // 发送带一个参数指向目标窗体的点击信号
             //  emit clicked(m_DestinationWidget);
@@ -132,4 +154,14 @@ void JumpLabel::mouseReleaseEvent(QMouseEvent* event)
     }
 
     QLabel::mouseReleaseEvent(event);
+}
+
+int JumpLabel::getCardID() const
+{
+    return cardID;
+}
+
+void JumpLabel::setCardID(int newCardID)
+{
+    cardID = newCardID;
 }

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QScrollArea>
 #include <QString>
-
+#include <QPainter>
 #include "../TOOLS/updater.h"
 #include "jumplabel.h"
 #include "chievementwidget.h"
@@ -24,12 +24,19 @@ private:
     int m_count;
     JumpLabel * addLabel;
 
+    QLabel *m_choiceLabelLeft;
+    QLabel *m_choiceLabelRight;
 
+    QPixmap *m_backgroundImage;
 
 public:
     static RSWidget* getInstance(QWidget *parent = nullptr);
     void addAchWidget(chievementWidget* achWidget);
     void initAddLabel(QString normalUrl,QString PressUrl);
+    void initChoiceLabels(QImage imgLeft,QImage imgRight);
+    void initBackground(QString path);
+    void paintEvent(QPaintEvent * e) override;
+
 public slots:
     void showNewAchWidget();
 

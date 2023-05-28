@@ -5,6 +5,15 @@
         <file>RESOURCE/test_Lose.png</file>
         <file>RESOURCE/test_Normal.png</file>
         <file>RESOURCE/test_Shy.png</file>
+        <file>RESOURCE/Character_Luwies_CardPix.png</file>
+        <file>RESOURCE/Character_Luwies_CardSmallPix.png</file>
+        <file>RESOURCE/Character_Luwies_Gesture_Annoyed.png</file>
+        <file>RESOURCE/Character_Luwies_Gesture_Happy.png</file>
+        <file>RESOURCE/Character_Luwies_Gesture_Lose.png</file>
+        <file>RESOURCE/Character_Luwies_Gesture_Normal.png</file>
+        <file>RESOURCE/Character_Luwies_Gesture_Shy.png</file>
+        <file>RESOURCE/Character_Luwies_Tachie.png</file>
+        <file>RESOURCE/Character_Luwies_TachieB.png</file>
     </qresource>
     <qresource prefix="/Music">
         <file>RESOURCE/test_music1.mp3</file>
@@ -43,5 +52,39 @@
         <file>RESOURCE/test_SR_object4.png</file>
         <file>RESOURCE/test_SR_object4_2.png</file>
         <file>RESOURCE/test_SR_object5.png</file>
+        <file>RESOURCE/test_SR_addLabel.png</file>
+        <file>RESOURCE/test_SR_addLabel2.png</file>
+        <file>RESOURCE/test_Background3.png</file>
+        <file>RESOURCE/test_main_obj1.png</file>
+        <file>RESOURCE/test_main_obj2.png</file>
+        <file>RESOURCE/test_main_obj3.png</file>
+        <file>RESOURCE/test_main_obj4.png</file>
+        <file>RESOURCE/test_main_obj5.png</file>
+        <file>RESOURCE/test_main_obj6.png</file>
+        <file>RESOURCE/test_main_head.png</file>
+        <file>RESOURCE/test_headFrame.png</file>
+        <file>RESOURCE/test_Background4.png</file>
+        <file>RESOURCE/test_main_obj7.png</file>
+        <file>RESOURCE/test_main_obj8.png</file>
+        <file>RESOURCE/test_main_obj9.png</file>
+        <file>RESOURCE/test_main_obj10.png</file>
+        <file>RESOURCE/test_CharacterCardPix1.png</file>
+        <file>RESOURCE/test_CharacterCardPix2.png</file>
+        <file>RESOURCE/test_CharacterCardPix3.png</file>
+        <file>RESOURCE/test_CharacterCardPix4.png</file>
+        <file>RESOURCE/test_CharacterCardSmallPix1.png</file>
+        <file>RESOURCE/test_CharacterCardSmallPix2.png</file>
+        <file>RESOURCE/test_CharacterCardSmallPix3.png</file>
+        <file>RESOURCE/test_CharacterCardSmallPix4.png</file>
+        <file>RESOURCE/test_CharacterTachiePix1.png</file>
+        <file>RESOURCE/test_CharacterHeadPix1.jpg</file>
+        <file>RESOURCE/test_Background5.png</file>
+        <file>RESOURCE/test_splite1.png</file>
+        <file>RESOURCE/test_Background5_2.png</file>
+        <file>RESOURCE/test_Background_mask1.png</file>
+        <file>RESOURCE/test_Background_mask2.png</file>
+        <file>RESOURCE/test_leftBtn.png</file>
+        <file>RESOURCE/test_rightBtn.png</file>
+        <file>RESOURCE/test_splite2.png</file>
     </qresource>
 </RCC>

@@ -13,6 +13,9 @@
 #include "UI/SPECIAL/ripple.h"
 #include "TOOLS/updater.h"
 #include "UI/style.h"
+#include "DATA/Story/characterhub.h"
+#include "UI/storyinfowidget.h"
+
 
 #include <QDebug>
 

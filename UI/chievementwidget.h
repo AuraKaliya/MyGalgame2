@@ -4,9 +4,11 @@
 #include <QWidget>
 #include "jumplabel.h"
 #include "../TOOLS/updater.h"
+#include "style.h"
 #include <QLabel>
 #include <QPixmap>
 #include <QString>
+#include <QPainter>
 
 class chievementWidget : public QWidget
 {
@@ -16,6 +18,11 @@ public:
 
     void initRSLabel(QString readNormal,QString readPress,QString saveNormal,QString savePress);
     void intiMainLabel(QString cen,QString achInfo,QVector<QString>emblem,QString achID,QString stP,QString gL);
+    void initCenterLabel(QString cen);
+    void initAchInfo(QString achInfo);
+    void initEmblems(QVector<QString>emblem);
+    void initRecallInfo(QString achID,QString stP,QString gL);
+   // void paintEvent(QPaintEvent * e);
 
 private:
     JumpLabel *m_readLabel;

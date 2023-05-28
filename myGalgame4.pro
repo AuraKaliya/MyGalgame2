@@ -11,7 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat
 CONFIG += c++17
 
-QMAKE_CXXFLAGS += -std:c++17 -Zc:__cplusplus
+ QMAKE_CXXFLAGS += -std:c++17 /Zc:__cplusplus
+
+
+
+ QMAKE_CXXFLAGS += -std=c++17
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -42,6 +46,7 @@ SOURCES += \
     DATA/Player/playerbase.cpp \
     DATA/Player/playeruser.cpp \
     DATA/Story/character.cpp \
+    DATA/Story/characterhub.cpp \
     DATA/Story/storyoption.cpp \
     DATA/instruction.cpp \
     DATA/instructionsolver.cpp \
@@ -60,17 +65,31 @@ SOURCES += \
     TOOLS/jssaver.cpp \
     TOOLS/musicplayer.cpp \
     TOOLS/nowachievement.cpp \
+    TOOLS/sourcetable.cpp \
     TOOLS/storyshowlabel.cpp \
     TOOLS/updater.cpp \
     UI/SPECIAL/ripple.cpp \
     UI/SPECIAL/rippleeffect.cpp \
+    UI/carouselmapwidget.cpp \
+    UI/carouselwidget.cpp \
+    UI/characterhubwidget.cpp \
+    UI/characterinfoshowwidget.cpp \
+    UI/characterstoryshowwidget.cpp \
+    UI/characterwidget.cpp \
     UI/chievementwidget.cpp \
     UI/choicelabel.cpp \
+    UI/choicewidget.cpp \
+    UI/headwidget.cpp \
     UI/jumplabel.cpp \
+    UI/mainwidget.cpp \
     UI/menuwidget.cpp \
     UI/rswidget.cpp \
+    UI/searchblok.cpp \
     UI/settingwidget.cpp \
+    UI/slideblock.cpp \
+    UI/storyinfowidget.cpp \
     UI/style.cpp \
+    UI/tachielabel.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -90,6 +109,7 @@ HEADERS += \
     DATA/Player/playerbase.h \
     DATA/Player/playeruser.h \
     DATA/Story/character.h \
+    DATA/Story/characterhub.h \
     DATA/Story/storyoption.h \
     DATA/instruction.h \
     DATA/instructionsolver.h \
@@ -109,17 +129,31 @@ HEADERS += \
     TOOLS/jssaver.h \
     TOOLS/musicplayer.h \
     TOOLS/nowachievement.h \
+    TOOLS/sourcetable.h \
     TOOLS/storyshowlabel.h \
     TOOLS/updater.h \
     UI/SPECIAL/ripple.h \
     UI/SPECIAL/rippleeffect.h \
+    UI/carouselmapwidget.h \
+    UI/carouselwidget.h \
+    UI/characterhubwidget.h \
+    UI/characterinfoshowwidget.h \
+    UI/characterstoryshowwidget.h \
+    UI/characterwidget.h \
     UI/chievementwidget.h \
     UI/choicelabel.h \
+    UI/choicewidget.h \
+    UI/headwidget.h \
     UI/jumplabel.h \
+    UI/mainwidget.h \
     UI/menuwidget.h \
     UI/rswidget.h \
+    UI/searchblok.h \
     UI/settingwidget.h \
+    UI/slideblock.h \
+    UI/storyinfowidget.h \
     UI/style.h \
+    UI/tachielabel.h \
     mainwindow.h
 
 FORMS += \
