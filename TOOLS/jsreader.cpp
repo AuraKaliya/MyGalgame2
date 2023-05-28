@@ -86,61 +86,74 @@ void JSReader::readJsonFileToAchievement()
 
     m_achievement->printMe();
 }
+QVector<Character*> JSReader::readJsonFileToCharacter() {
+    QVector<Character*> characters;
 
-QVector<Character*> JSReader::readJsonFileToCharacter()
-{
-    QVector<Character*> characterList;
-
-    QFile jsonFile(m_filePath);
-    if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qWarning() << "Failed to open JSON file.";
-        return characterList;
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Can't open the file!" << Qt::endl;
+        return characters;
     }
 
-    QByteArray jsonData = jsonFile.readAll();
-    QJsonDocument document(QJsonDocument::fromJson(jsonData));
+    QByteArray byteArray = file.readAll();
+    QJsonDocument doc(QJsonDocument::fromJson(byteArray));
+    QJsonObject obj = doc.object();
 
-    QJsonObject object = document.object();
+    if (obj.contains("Character")) {
+        QJsonArray characterArray = obj["Character"].toArray();
+        int characterCount = characterArray.size();
 
-    for (auto it = object.begin(); it != object.end(); ++it)
-    {
-        QJsonValue value = it.value();
+        for (int i = 0; i < characterCount; i++) {
+            QJsonObject characterObject = characterArray[i].toObject();
 
-        if (value.isObject())
-        {
-            QJsonObject jsonObject = value.toObject();
+            int ID = characterObject["ID"].toInt();
+            QString name = characterObject["Name"].toString();
+            QString introduction = characterObject["Introduction"].toString();
+            QString nicoTitle = characterObject["NicoTitle"].toString();
+            QString cardPix = characterObject["CardPix"].toString();
+            QString cardSmallPix=characterObject["CardSmallPix"].toString();
+            QString headPix = characterObject["HeadPix"].toString();
+            QString tachiePix = characterObject["TachiePix"].toString();
+            QString lines = characterObject["Lines"].toString();
 
-            int id = jsonObject["ID"].toInt();
-            QString name = jsonObject["Name"].toString();
+            QString gestureNormal = characterObject["Gesture_Normal"].toString();
+            QString gestureHappy = characterObject["Gesture_Happy"].toString();
+            QString gestureShy = characterObject["Gesture_Shy"].toString();
+            QString gestureLose = characterObject["Gesture_Lose"].toString();
+            QString gestureAnnoyed = characterObject["Gesture_Annoyed"].toString();
 
-            QVector<QString> gesture;
-            gesture.append(jsonObject["Gesture_Normal"].toString());
-            gesture.append(jsonObject["Gesture_Happy"].toString());
-            gesture.append(jsonObject["Gesture_Shy"].toString());
-            gesture.append(jsonObject["Gesture_Lose"].toString());
+            QString story=characterObject["Story"].toString();
+            QString storyTitle=characterObject["StoryTitle"].toString();
+            qDebug()<<gestureNormal<<gestureHappy<<gestureShy<<gestureLose;
+            QVector<QString> gestures;
+            gestures.push_back(gestureNormal);
+            gestures.push_back(gestureHappy);
+            gestures.push_back(gestureShy);
+            gestures.push_back(gestureLose);
+            gestures.push_back(gestureAnnoyed);
 
-            QString lines = jsonObject["Lines"].toString();
+            QVector<QString> characterLines;
             QStringList lineList = lines.split("|");
-
-            QVector<QString> lineVector;
-            for (QString line : lineList)
-            {
-                lineVector.append(line);
+            for (int j = 0; j < lineList.size(); j++) {
+                characterLines.push_back(lineList[j]);
             }
 
-            QString introduction = jsonObject["Introduction"].toString();
-
-            Character* newCharacter = new Character();
-            newCharacter->init(id, name, gesture, lineVector, introduction);
-
-            characterList.append(newCharacter);
+            Character* character = new Character();
+            character->init(ID, name, gestures, characterLines, introduction);
+            character->setNicoTitle(nicoTitle);
+            character->setCardPixPath(cardPix);
+            character->setCardSmallPixPath(cardSmallPix);
+            character->setHeadPixPath(headPix);
+            character->setTachiePixPath(tachiePix);
+            character->setStory(story);
+            character->setStoryTitle(storyTitle);
+            characters.push_back(character);
         }
     }
 
-    jsonFile.close();
+    file.close();
 
-    return characterList;
+    return characters;
 }
 
 void JSReader::setFilePath(const QString &filePath)
@@ -155,6 +168,10 @@ void JSReader::init()
     m_menuWidget=MenuWidget::getInstance();
     m_settingWidget=SettingWidget::getInstance();
     m_rsWidget=RSWidget::getInstance();
+    m_sourceTable=SourceTable::getInstance();
+    m_mainWidget=MainWidget::getInstance();
+    m_characterHub=CharacterHub::getInstance();
+    m_characterWidget=CharacterWidget::getInstance();
 }
 void JSReader::readJsonFileToMusicPlayer()
 {
@@ -182,7 +199,7 @@ void JSReader::readJsonFileToMusicPlayer()
         QJsonObject obj = musicJson.toObject();
         QString name = obj.value("name").toString();
         QString src = obj.value("src").toString();
-          qDebug()<<name<<"-"<<src;
+         // qDebug()<<name<<"-"<<src;
         QPair<QString, QString> music = {name, src};
         musicList.append(music);
     }
@@ -242,19 +259,25 @@ void JSReader::readJsonFileToStyle()
     styleDic.insert("Label_border_radius", labelBorderRadius);
 
     styleDic.insert("Label_text_style0", " ");
-    // 获取/设置标签文本样式1
-    QString labelTextStyle1 = jsonObj.value("Label_text_style1").toString();
-    styleDic.insert("Label_text_style1", labelTextStyle1);
 
-    // 获取/设置标签文本样式2
-    QString labelTextStyle2 = jsonObj.value("Label_text_style2").toString();
-    styleDic.insert("Label_text_style2", labelTextStyle2);
+    for(int i=0;i<20;++i)
+    {
+        QString labelTextStyle=jsonObj.value("Label_text_style"+QString::number(i)).toString();
+        styleDic.insert("Label_text_style"+QString::number(i), labelTextStyle);
+    }
+//    // 获取/设置标签文本样式1
+//    QString labelTextStyle1 = jsonObj.value("Label_text_style1").toString();
+//    styleDic.insert("Label_text_style1", labelTextStyle1);
 
-    // 获取/设置标签文本样式3
-    QString labelTextStyle3 = jsonObj.value("Label_text_style3").toString();
-    styleDic.insert("Label_text_style3", labelTextStyle3);
+//    // 获取/设置标签文本样式2
+//    QString labelTextStyle2 = jsonObj.value("Label_text_style2").toString();
+//    styleDic.insert("Label_text_style2", labelTextStyle2);
 
-    qDebug()<<styleDic;
+//    // 获取/设置标签文本样式3
+//    QString labelTextStyle3 = jsonObj.value("Label_text_style3").toString();
+//    styleDic.insert("Label_text_style3", labelTextStyle3);
+
+    //qDebug()<<styleDic;
     // 将样式字典传递给Style类实例，并让它处理样式信息
     Style::getInstance()->reset(styleDic);
 }
@@ -306,7 +329,7 @@ void JSReader::readJsonFileToMenuWidget()
         bool isMask = obj.value("Mask").toBool();
 
         QSize size(obj.value("FixedSize").toArray().at(0).toInt(), obj.value("FixedSize").toArray().at(1).toInt());
-        qDebug()<<size;
+        //qDebug()<<size;
         QPoint move(obj.value("move").toArray().at(0).toInt(), obj.value("move").toArray().at(1).toInt());
         JumpLabel *label = new JumpLabel(m_menuWidget);
         label->setFixedSize(size);
@@ -611,45 +634,661 @@ void JSReader::readJsonFileToSetting() {
         QString choiceLabelImage = obj["ChoiceLabelImage"].toString();
         // 将数据存入相关变量中
         // ...
-    }
+        QImage imgLeft;
+        imgLeft.load(choiceLabelImage);
+        QImage imgRight = imgLeft.mirrored(true,false);
 
+        m_rsWidget->initChoiceLabels(imgLeft,imgRight);
+
+    }
+      if (obj.contains("AchAddLabelNormal") && obj["AchAddLabelNormal"].isString())
+    {
+        QString addLabel1=obj["AchAddLabelNormal"].toString();
+        QString addLabel2=obj["AchAddLabelPress"].toString();
+        m_rsWidget->initAddLabel(addLabel1,addLabel2);
+    }
+      if (obj.contains("BackgroundPix") && obj["BackgroundPix"].isString())
+      {
+        QString backgroundPix=obj["BackgroundPix"].toString();
+        m_rsWidget->initBackground(backgroundPix);
+      }
+
+
+
+    QString achMainShowLabelPix;
     // 读取 AchMainShowLabelPix 字段
     if (obj.contains("AchMainShowLabelPix") && obj["AchMainShowLabelPix"].isString())
     {
-        QString achMainShowLabelPix = obj["AchMainShowLabelPix"].toString();
+         achMainShowLabelPix= obj["AchMainShowLabelPix"].toString();
         // 将数据存入相关变量中
-        // ...
+        // ...     
     }
 
+    QString achReadNormal;
     // 读取 AchReadNormal 字段
     if (obj.contains("AchReadNormal") && obj["AchReadNormal"].isString())
     {
-        QString achReadNormal = obj["AchReadNormal"].toString();
+         achReadNormal= obj["AchReadNormal"].toString();
         // 将数据存入相关变量中
         // ...
     }
 
+    QString achReadPress;
     // 读取 AchReadPress 字段
     if (obj.contains("AchReadPress") && obj["AchReadPress"].isString())
     {
-        QString achReadPress = obj["AchReadPress"].toString();
+        achReadPress= obj["AchReadPress"].toString();
         // 将数据存入相关变量中
         // ...
     }
 
+    QString achSaveNormal;
     // 读取 AchSaveNormal 字段
     if (obj.contains("AchSaveNormal") && obj["AchSaveNormal"].isString())
     {
-        QString achSaveNormal = obj["AchSaveNormal"].toString();
+         achSaveNormal = obj["AchSaveNormal"].toString();
         // 将数据存入相关变量中
         // ...
     }
 
+    QString achSavePress ;
     // 读取 AchSavePress 字段
     if (obj.contains("AchSavePress") && obj["AchSavePress"].isString())
     {
-        QString achSavePress = obj["AchSavePress"].toString();
+        achSavePress= obj["AchSavePress"].toString();
         // 将数据存入相关变量中
         // ...
     }
+
+    QJsonArray achievementWidgetGroup=obj.value("Achievement").toArray();
+    QVector<chievementWidget*> achWidgets;
+    for(int i=0;i<achievementWidgetGroup.size();++i)
+    {
+        QJsonObject widgetObject=achievementWidgetGroup[i].toObject();
+        chievementWidget* ach=new chievementWidget();
+
+        QString ID=widgetObject.value("ID").toString();
+        QString Path=widgetObject.value("Path").toString();
+        QString CreateTime=widgetObject.value("CreateTime").toString();
+        QString UpdateTime=widgetObject.value("UpdateTime").toString();
+        QString StroyProgress=widgetObject.value("StroyProgress").toString();
+        QString GameLevel=widgetObject.value("GameLevel").toString();
+        QString Emblem1=widgetObject.value("Emblem1").toString();
+        QString Emblem2=widgetObject.value("Emblem2").toString();
+        QString Emblem3=widgetObject.value("Emblem3").toString();
+        ach->initCenterLabel(achMainShowLabelPix);
+        ach->initRSLabel(achReadNormal,achReadPress,achSaveNormal,achSavePress);
+        //qDebug()<<"23333333333333";
+        QString achInfo=QString("创建时间:"+CreateTime);
+                achInfo+="\n";
+                achInfo+=QString("更新时间:"+UpdateTime);
+
+        ach->initAchInfo(achInfo);
+
+        ach->initRecallInfo(ID,StroyProgress,GameLevel);
+
+        QVector<QString> emblems;
+        QVector<QString> emblemsPath;
+        emblems<<Emblem1<<Emblem2<<Emblem3;
+        for(int i=0;i<3;i++)
+        {
+            emblemsPath<<m_sourceTable->findEmblemTablePath(emblems[i]);
+        }
+        ach->initEmblems(emblemsPath);
+
+        m_rsWidget->addAchWidget(ach);
+    }
+
+
 }
+
+void JSReader::readJsonFileToMainWidget()
+{
+    QFile jsonFile(m_filePath);
+    if(!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug()<<"Can't open the file!"<<Qt::endl;
+        return;
+    }
+
+    QByteArray jsonData = jsonFile.readAll();
+    jsonFile.close();
+
+    QJsonParseError jsonError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &jsonError);
+
+    if(jsonError.error != QJsonParseError::NoError)
+    {
+        qDebug()<<"Json Error!";
+        return;
+    }
+
+    QJsonObject rootObj = jsonDoc.object();
+
+    // 读取mainShowLabel
+    QVector<JumpLabel*>mainShowLabelGroup;
+    QVector<QRect>rectGroup;
+    QJsonArray mainShowArr = rootObj.value("mainShowLabel").toArray();
+    for(int i = 0; i < mainShowArr.size(); ++i)
+    {
+        JumpLabel * tmpJL=new JumpLabel();
+
+        QJsonObject mainObj = mainShowArr.at(i).toObject();
+        QString text = mainObj.value("Text").toString();
+        QString pixPath = mainObj.value("Pix").toString();
+        QRect rect = QRect(mainObj["Rect"].toArray()[0].toInt(),
+                           mainObj["Rect"].toArray()[1].toInt(),
+                           mainObj["Rect"].toArray()[2].toInt(),
+                           mainObj["Rect"].toArray()[3].toInt());
+        // 使用读取到的信息进行相关操作
+        tmpJL->setText(text);
+        QPixmap* pix=new QPixmap(pixPath);
+        tmpJL->setPixmapPathGroup(pixPath,pixPath);
+        tmpJL->setPixmapGroup(pix,pix);
+
+        tmpJL->setMaskStatus(true);
+
+        tmpJL->setAlignment(Qt::AlignCenter);
+
+        tmpJL->setFont(QFont("楷体",30,QFont::Bold,Qt::white));
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::white);
+        tmpJL->setPalette(pa);
+
+        tmpJL->setDestination(Updater::getInstance()->findWidget(text));
+        connect(tmpJL, SIGNAL(jump(QWidget*)),
+                Updater::getInstance()->findParent(Updater::getInstance()->findWidget(text)),SLOT(setCurrentWidget(QWidget*)));
+
+        rectGroup<<rect;
+        mainShowLabelGroup<<tmpJL;
+    }
+    m_mainWidget->initMainShowLabel(mainShowLabelGroup,rectGroup);
+
+
+
+    //暂时未作
+
+    // 读取ToolShowLabel
+    QVector<JumpLabel*>toolLabelGroup;
+    QVector<QRect> rectList;
+    QJsonArray toolShowArr = rootObj.value("ToolShowLabel").toArray();
+    for(int i = 0; i < toolShowArr.size(); ++i)
+    {
+        QJsonObject toolObj = toolShowArr.at(i).toObject();
+        QString text=toolObj.value("Text").toString();
+        QString pixPath = toolObj.value("Pix").toString();
+        QRect rect = QRect(toolObj["Rect"].toArray()[0].toInt(),
+                           toolObj["Rect"].toArray()[1].toInt(),
+                           toolObj["Rect"].toArray()[2].toInt(),
+                           toolObj["Rect"].toArray()[3].toInt());
+        // 使用读取到的信息进行相关操作
+        // ...
+
+        JumpLabel * tmpL=new JumpLabel();
+        tmpL->setPixmapPathGroup(pixPath,pixPath);
+        tmpL->setPixmapGroup(new QPixmap(pixPath),new QPixmap(pixPath));
+
+        connect(    tmpL,SIGNAL(jump(QWidget*)),
+                    Updater::getInstance()->findParent(Updater::getInstance()->findWidget(text)), SLOT(setCurrentWidget(QWidget*))
+                );
+
+        toolLabelGroup<<tmpL;
+        rectList<<rect;
+    }
+    m_mainWidget->initToolShowLabel(toolLabelGroup,rectList);
+
+
+
+    // 读取ToolShowButton
+    QJsonObject toolBtnObj = rootObj.value("ToolShowButton").toObject();
+    QString pix1Path = toolBtnObj.value("Pix1").toString();
+    QString pix2Path = toolBtnObj.value("Pix2").toString();
+    // 使用读取到的信息进行相关操作
+    // ...
+    m_mainWidget->initToolButton(QPixmap(pix1Path),pix1Path,pix2Path);
+
+
+
+
+    // 读取HeadWidget
+    QJsonObject headWidgetObj = rootObj.value("HeadWidget").toObject();
+    QString headPixPath = headWidgetObj.value("headPix").toString();
+    QString headInfoPixPath = headWidgetObj.value("headInfoPix").toString();
+    QString headFramePath = headWidgetObj.value("headFrame").toString();
+    // 使用读取到的信息进行相关操作
+    // ...
+    HeadWidget * headW=new HeadWidget();
+    QPixmap * head=new QPixmap(headPixPath);
+    QPixmap * headInfo=new QPixmap(headInfoPixPath);
+    headW->initPix(head,headInfo);
+    QPixmap * headFrame=new QPixmap(headFramePath);
+    headW->setFrame(headFrame);
+
+    // 读取HeadWidgetRect
+    QJsonArray headWidgetRectArr = rootObj.value("HeadWidgetRect").toArray();
+    QRect headWidgetRect = QRect(headWidgetRectArr[0].toInt(),
+                                 headWidgetRectArr[1].toInt(),
+                                 headWidgetRectArr[2].toInt(),
+                                 headWidgetRectArr[3].toInt());
+    // 使用读取到的信息进行相关操作
+    // ...
+    QJsonObject tachieLabelObj = rootObj.value("TachieLabel").toObject();
+    QString characterName=tachieLabelObj.value("CharacterName").toString();
+    Character * tmpCharacter=m_characterHub->findCharacter(characterName);
+
+
+    QRect tachieRect = QRect(rootObj["TachieRect"].toArray()[0].toInt(),
+                       rootObj["TachieRect"].toArray()[1].toInt(),
+                       rootObj["TachieRect"].toArray()[2].toInt(),
+                       rootObj["TachieRect"].toArray()[3].toInt());
+
+    TachieLabel *tachieLabel=new TachieLabel();
+    tachieLabel->setTouchLock(true);
+    tachieLabel->initCharacter(tmpCharacter,tachieRect);
+
+
+    QMap<QString,QRect> touchRect;
+    touchRect.insert("开心",QRect(tachieRect.x(),0,625,200));
+    touchRect.insert("害羞",QRect(tachieRect.x(),(tachieRect.height())/4,tachieRect.width(),(tachieRect.height())/4));
+    touchRect.insert("生气",QRect(tachieRect.x(),(tachieRect.height()*2)/4,tachieRect.width(),(tachieRect.height())/4));
+    touchRect.insert("沮丧",QRect(tachieRect.x(),(tachieRect.height()*3)/4,tachieRect.width(),(tachieRect.height())/4));
+    tachieLabel->initTouchRect(touchRect);
+    tachieLabel->setVisible(true);
+    m_mainWidget->initTachieLabel(tachieLabel,tachieRect);
+
+    m_mainWidget->setHeadWidget(headW,headWidgetRect);
+
+
+
+    // 读取BackgroundPix
+    QString backgroundPixPath = rootObj.value("BackgroundPix").toString();
+    // 使用读取到的信息进行相关操作
+    // ...
+    m_mainWidget->setBackground(backgroundPixPath);
+
+
+
+}
+
+void JSReader::readJsonFileToCharacterWidget()
+{
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        // 打开文件失败
+        qDebug()<<"HHHHHHHHHHHHHHHHHH0";
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    QJsonParseError error;
+    QJsonDocument jsonDoc(QJsonDocument::fromJson(data, &error));
+    if (jsonDoc.isNull() || !jsonDoc.isObject())
+    {
+        // 解析 JSON 失败
+        qDebug()<<"HHHHHHHHHHHHHHHHHH1";
+        return;
+    }
+
+    QJsonObject rootObj = jsonDoc.object();
+    if (!rootObj.contains("CharacterWidget"))
+    {
+
+        // 不包含 CharacterWidget 节点
+        for(auto it:rootObj)
+        {
+            qDebug()<<it;
+        }
+        qDebug()<<"HHHHHHHHHHHHHHHHHH2";
+        return;
+    }
+
+    QJsonObject charaWidgetObj = rootObj.value("CharacterWidget").toObject();
+    if (!charaWidgetObj.contains("CharacterHubWidget")
+        || !charaWidgetObj.contains("CharacterShowWidget")
+        || !charaWidgetObj.contains("CharacterInfoWidget")
+        || !charaWidgetObj.contains("BackgroundImagePath"))
+    {
+        // CharacterWidget 节点不完整
+        qDebug()<<"HHHHHHHHHHHHHHHHHH3";
+        return;
+    }
+
+    // 读取 CharacterHubWidget 节点
+    QJsonObject charaHubWidgetObj = charaWidgetObj.value("CharacterHubWidget").toObject();
+    if (!charaHubWidgetObj.contains("ShowRect")
+        || !charaHubWidgetObj.contains("HideRect")
+        || !charaHubWidgetObj.contains("AreaShowRect")
+        || !charaHubWidgetObj.contains("AreaHideRect")
+        || !charaHubWidgetObj.contains("CardSize")
+        || !charaHubWidgetObj.contains("CardSmallSize")
+        || !charaHubWidgetObj.contains("space"))
+    {
+        qDebug()<<"HHHHHHHHHHHHHHHHHH4";
+        // CharacterHubWidget 节点不完整
+        return;
+    }
+    //qDebug()<<"HHHHHHHHHHHHHHHHHHW";
+    QRect showRect(charaHubWidgetObj.value("ShowRect").toArray().at(0).toInt(),
+                   charaHubWidgetObj.value("ShowRect").toArray().at(1).toInt(),
+                   charaHubWidgetObj.value("ShowRect").toArray().at(2).toInt(),
+                   charaHubWidgetObj.value("ShowRect").toArray().at(3).toInt());
+    QRect hideRect(charaHubWidgetObj.value("HideRect").toArray().at(0).toInt(),
+                   charaHubWidgetObj.value("HideRect").toArray().at(1).toInt(),
+                   charaHubWidgetObj.value("HideRect").toArray().at(2).toInt(),
+                   charaHubWidgetObj.value("HideRect").toArray().at(3).toInt());
+    QRect areaShowRect(charaHubWidgetObj.value("AreaShowRect").toArray().at(0).toInt(),
+                       charaHubWidgetObj.value("AreaShowRect").toArray().at(1).toInt(),
+                       charaHubWidgetObj.value("AreaShowRect").toArray().at(2).toInt(),
+                       charaHubWidgetObj.value("AreaShowRect").toArray().at(3).toInt());
+    QRect areaHideRect(charaHubWidgetObj.value("AreaHideRect").toArray().at(0).toInt(),
+                       charaHubWidgetObj.value("AreaHideRect").toArray().at(1).toInt(),
+                       charaHubWidgetObj.value("AreaHideRect").toArray().at(2).toInt(),
+                       charaHubWidgetObj.value("AreaHideRect").toArray().at(3).toInt());
+    QSize cardSize(charaHubWidgetObj.value("CardSize").toArray().at(0).toInt(),
+                   charaHubWidgetObj.value("CardSize").toArray().at(1).toInt());
+    QSize cardSmallSize(charaHubWidgetObj.value("CardSmallSize").toArray().at(0).toInt(),
+                        charaHubWidgetObj.value("CardSmallSize").toArray().at(1).toInt());
+    int space = charaHubWidgetObj.value("space").toInt();
+
+    // 读取 CharacterShowWidget 节点
+    QJsonObject charaShowWidgetObj = charaWidgetObj.value("CharacterShowWidget").toObject();
+    if (!charaShowWidgetObj.contains("Rect"))
+    {
+        // CharacterShowWidget 节点不完整
+        return;
+    }
+    QRect charaShowRect(charaShowWidgetObj.value("Rect").toArray().at(0).toInt(),
+                        charaShowWidgetObj.value("Rect").toArray().at(1).toInt(),
+                        charaShowWidgetObj.value("Rect").toArray().at(2).toInt(),
+                        charaShowWidgetObj.value("Rect").toArray().at(3).toInt());
+
+    // 读取 CharacterInfoWidget 节点
+    QJsonObject charaInfoWidgetObj = charaWidgetObj.value("CharacterInfoWidget").toObject();
+    if (!charaInfoWidgetObj.contains("LabelInfo")
+        || !charaInfoWidgetObj.contains("LabelRect")
+        || !charaInfoWidgetObj.contains("Space")
+        || !charaInfoWidgetObj.contains("NormalPixPath")
+        || !charaInfoWidgetObj.contains("ChoicePixPath"))
+    {
+        // CharacterInfoWidget 节点不完整
+        return;
+    }
+    QJsonArray labelInfoArray = charaInfoWidgetObj.value("LabelInfo").toArray();
+    QVector<JumpLabel *> characterInfoGroup;
+    for (int i = 0; i < labelInfoArray.size(); i++)
+    {
+        QJsonObject labelInfoObj = labelInfoArray.at(i).toObject();
+        QString text = labelInfoObj.value("Text").toString();
+        QString type = labelInfoObj.value("Type").toString();
+        JumpLabel * label = new JumpLabel();
+        characterInfoGroup.append(label);
+        label->setFont(QFont("楷体",25,QFont::Bold,Qt::white));
+        label->setAlignment(Qt::AlignCenter);
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::white);
+        label->setPalette(pa);
+        label->setText(text);
+
+    }
+    QRect labelRect(charaInfoWidgetObj.value("LabelRect").toArray().at(0).toInt(),
+                    charaInfoWidgetObj.value("LabelRect").toArray().at(1).toInt(),
+                    charaInfoWidgetObj.value("LabelRect").toArray().at(2).toInt(),
+                    charaInfoWidgetObj.value("LabelRect").toArray().at(3).toInt());
+    int infoSpace = charaInfoWidgetObj.value("Space").toInt();
+    QString normalPixPath = charaInfoWidgetObj.value("NormalPixPath").toString();
+    QString choicePixPath = charaInfoWidgetObj.value("ChoicePixPath").toString();
+
+    for(auto it:characterInfoGroup)
+    {
+        it->setPixmapPathGroup(normalPixPath,choicePixPath);
+    }
+
+
+
+    // 读取 BackgroundImagePath 节点
+    QString bkgPath = charaWidgetObj.value("BackgroundImagePath").toString();
+
+    // 初始化 CharacterWidget
+
+    CharacterHubWidget *characterHubWidget=new CharacterHubWidget(m_characterWidget);
+    connect(characterHubWidget,&CharacterHubWidget::characterClicked,m_characterWidget,&CharacterWidget::setNowCharacter);
+    characterHubWidget->initRect(showRect,hideRect);
+    characterHubWidget->initCardSize(cardSize,cardSmallSize);
+    characterHubWidget->initAreaRect(areaShowRect,areaHideRect);
+    characterHubWidget->setSpace(space);
+    characterHubWidget->initCharacterHub();
+    connect(characterHubWidget,&CharacterHubWidget::widgetHide,m_characterWidget,&CharacterWidget::hubHide);
+    connect(characterHubWidget,&CharacterHubWidget::widgetShow,m_characterWidget,&CharacterWidget::hubShow);
+
+
+   // characterHubWidget->initWidget();
+    m_characterWidget->initCharacterHubWidget(characterHubWidget,showRect);
+
+    m_characterWidget->initCharacterInfoGroup(characterInfoGroup, labelRect, infoSpace);
+
+    m_characterWidget->initCharacterInfoShowWidget(CharacterInfoShowWidget::getInstance(), charaShowRect);
+    m_characterWidget->initCharacterStoryWidget(CharacterStoryShowWidget::getInstance(),charaShowRect);
+    m_characterWidget->setBackground(bkgPath);
+
+    m_characterWidget->initLink();
+
+
+
+}
+
+// 读取JSON文件
+void readJsonFile(const QString& fileName, StoryShowWidgetInfo& storyShowWidgetInfo) {
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // 打开文件失败
+        return;
+    }
+
+    QByteArray jsonData = file.readAll();
+    QJsonParseError parseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &parseError);
+    if (parseError.error != QJsonParseError::NoError || jsonDoc.isNull() || !jsonDoc.isObject()) {
+        // 解析JSON失败
+        return;
+    }
+
+    const QJsonObject& jsonObj = jsonDoc.object();
+    const QJsonObject& storyShowWidgetObj = jsonObj.value("StoryShowWidget").toObject();
+
+    // 解析ChoiceWidget信息
+    if (storyShowWidgetObj.contains("ChoiceWidget")) {
+        const QJsonObject& choiceWidgetObj = storyShowWidgetObj.value("ChoiceWidget").toObject();
+
+        storyShowWidgetInfo.choiceWidgetInfo.widgetClass = choiceWidgetObj.value("WidgetClass").toString();
+
+        const QJsonArray& widgetRectArray = choiceWidgetObj.value("WidgetRect").toArray();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.left = widgetRectArray.at(0).toInt();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.top = widgetRectArray.at(1).toInt();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.width = widgetRectArray.at(2).toInt();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.height = widgetRectArray.at(3).toInt();
+
+        const QJsonObject& widgetSettingObj = choiceWidgetObj.value("WidgetSetting").toObject();
+        const QJsonArray& labelArray = widgetSettingObj.value("Label").toArray();
+
+        for (const auto& labelValue : labelArray) {
+            if (labelValue.isObject()) {
+                const QJsonObject& labelObj = labelValue.toObject();
+                const QString& labelName = labelObj.value("LabelName").toString();
+                storyShowWidgetInfo.choiceWidgetInfo.setting.labelNames << labelName;
+
+                LabelInfo labelInfo;
+                labelInfo.labelName = labelName;
+                labelInfo.labelClass = labelObj.value("LabelClass").toString();
+
+                const QJsonArray& labelGroupArray = labelObj.value("LabelGroup").toArray();
+                for (const auto& groupValue : labelGroupArray) {
+                    if (groupValue.isObject()) {
+                        const QJsonObject& groupObj = groupValue.toObject();
+                        LabelGroup labelGroup;
+                        labelGroup.text = groupObj.value("Text").toString();
+                        labelGroup.pix.pixUrl = groupObj.value("PixUrl").toString();
+                        labelGroup.pix.status1 = groupObj.value("Status1").toInt();
+                        labelGroup.pix.status2 = groupObj.value("Status2").toInt();
+                        labelGroup.pix.status3 = groupObj.value("Status3").toInt();
+                        const QJsonArray& rectArray = groupObj.value("Rect").toArray();
+                        labelGroup.rect.left = rectArray.at(0).toInt();
+                        labelGroup.rect.top = rectArray.at(1).toInt();
+                        labelGroup.rect.width = rectArray.at(2).toInt();
+                        labelGroup.rect.height = rectArray.at(3).toInt();
+                        labelGroup.mask = groupObj.value("Mask").toBool();
+                        labelGroup.cardId = groupObj.value("CardID").toInt();
+                        labelGroup.destination = groupObj.value("Destination").toString();
+                        labelInfo.labelGroups << labelGroup;
+                    }
+                }
+
+                // TODO：根据需求将Label信息存储到数据对象中
+            }
+        }
+    }
+
+    // 解析CarouselMapWidget信息
+    if (storyShowWidgetObj.contains("CarousMapWidget")) {
+        const QJsonObject& carousMapWidgetObj = storyShowWidgetObj.value("CarousMapWidget").toObject();
+
+        storyShowWidgetInfo.carousMapWidgetInfo.widgetClass = carousMapWidgetObj.value("WidgetClass").toString();
+
+        const QJsonArray& widgetRectArray = carousMapWidgetObj.value("WidgetRect").toArray();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.left = widgetRectArray.at(0).toInt();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.top = widgetRectArray.at(1).toInt();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.width = widgetRectArray.at(2).toInt();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.height = widgetRectArray.at(3).toInt();
+
+        const QJsonObject& widgetSettingObj = carousMapWidgetObj.value("WidgetSetting").toObject();
+        const QJsonArray& labelArray = widgetSettingObj.value("Label").toArray();
+
+        for (const auto& labelValue : labelArray) {
+            if (labelValue.isObject()) {
+                const QJsonObject& labelObj = labelValue.toObject();
+                const QString& labelName = labelObj.value("LabelName").toString();
+                storyShowWidgetInfo.carousMapWidgetInfo.setting.labelNames << labelName;
+
+                LabelInfo labelInfo;
+                labelInfo.labelName = labelName;
+                labelInfo.labelClass = labelObj.value("LabelClass").toString();
+
+                const QJsonArray& labelGroupArray = labelObj.value("LabelGroup").toArray();
+                for (const auto& groupValue : labelGroupArray) {
+                    if (groupValue.isObject()) {
+                        const QJsonObject& groupObj = groupValue.toObject();
+                        LabelGroup labelGroup;
+                        labelGroup.mask = groupObj.value("Mask").toBool();
+                        labelGroup.cardId = groupObj.value("CardID").toInt();
+                        labelGroup.destination = groupObj.value("Destination").toString();
+                        labelInfo.labelGroups << labelGroup;
+                    }
+                }
+
+                // TODO：根据需求将Label信息存储到数据对象中
+            }
+        }
+
+        const QJsonObject& buttonObj = widgetSettingObj.value("Button").toObject();
+        const QString& buttonName = buttonObj.value("ButtonName").toString();
+        storyShowWidgetInfo.carousMapWidgetInfo.setting.buttonNames << buttonName;
+
+        ButtonInfo buttonInfo;
+        buttonInfo.buttonName = buttonName;
+        buttonInfo.buttonClass = buttonObj.value("ButtonClass").toString();
+
+        const QJsonArray& buttonGroupArray = buttonObj.value("ButtonGroup").toArray();
+        for (const auto& groupValue : buttonGroupArray) {
+            if (groupValue.isObject()) {
+                const QJsonObject& groupObj = groupValue.toObject();
+                ButtonGroup buttonGroup;
+                buttonGroup.pressPix.pixUrl = groupObj.value("PressPixUrl").toString();
+                buttonGroup.pressPix.status1 = groupObj.value("Status1").toInt();
+                buttonGroup.pressPix.status2 = groupObj.value("Status2").toInt();
+                buttonGroup.pressPix.status3 = groupObj.value("Status3").toInt();
+                buttonGroup.normalPix.pixUrl = groupObj.value("NormalPixUrl").toString();
+                buttonGroup.normalPix.status1 = groupObj.value("Status1").toInt();
+                buttonGroup.normalPix.status2 = groupObj.value("Status2").toInt();
+                buttonGroup.normalPix.status3 = groupObj.value("Status3").toInt();
+                const QJsonArray& rectArray = groupObj.value("Rect").toArray();
+                buttonGroup.rect.left = rectArray.at(0).toInt();
+                buttonGroup.rect.top = rectArray.at(1).toInt();
+                buttonGroup.rect.width = rectArray.at(2).toInt();
+                buttonGroup.rect.height = rectArray.at(3).toInt();
+                buttonGroup.link = groupObj.value("Link").toString();
+                buttonInfo.buttonGroups << buttonGroup;
+            }
+        }
+
+        // TODO：根据需求将Button信息存储到数据对象中
+    }
+
+    // 解析StoryInfoWidget信息
+    if (storyShowWidgetObj.contains("StroyInfoWidget")) {
+        const QJsonObject& storyInfoWidgetObj = storyShowWidgetObj.value("StroyInfoWidget").toObject();
+
+        storyShowWidgetInfo.storyInfoWidgetInfo.widgetClass = storyInfoWidgetObj.value("WidgetClass").toString();
+
+        const QJsonArray& widgetRectArray = storyInfoWidgetObj.value("WidgetRect").toArray();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.left = widgetRectArray.at(0).toInt();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.top = widgetRectArray.at(1).toInt();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.width = widgetRectArray.at(2).toInt();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.height = widgetRectArray.at(3).toInt();
+
+        const QJsonObject& widgetSettingObj = storyInfoWidgetObj.value("WidgetSetting").toObject();
+        const QJsonArray& linkObjectsArray = widgetSettingObj.value("LinkObjects").toArray();
+        QStringList linkObjectsList;
+        for (int i = 0; i < linkObjectsArray.size(); ++i) {
+            linkObjectsList.append(linkObjectsArray.at(i).toString());
+        }
+        const QJsonArray& linkSignalsArray = widgetSettingObj.value("LinkSignals").toArray();
+        QStringList linkSignalsList;
+        for (int i = 0; i < linkSignalsArray.size(); ++i) {
+            linkSignalsList.append(linkSignalsArray.at(i).toString());
+        }
+        const QJsonArray& linkSlotsArray = widgetSettingObj.value("LinkSlots").toArray();
+        QStringList linkSlotsList;
+        for (int i = 0; i < linkSlotsArray.size(); ++i) {
+            linkSlotsList.append(linkSlotsArray.at(i).toString());
+        }
+
+        if (!linkObjectsList.isEmpty() && !linkSignalsList.isEmpty() && !linkSlotsList.isEmpty()) {
+            storyShowWidgetInfo.storyInfoWidgetInfo.link.linkObjectName = linkObjectsList.first();
+            storyShowWidgetInfo.storyInfoWidgetInfo.link.linkSignalName = linkSignalsList.first();
+            storyShowWidgetInfo.storyInfoWidgetInfo.link.linkSlotName = linkSlotsList.first();
+        }
+
+        const QJsonObject& labelObj = widgetSettingObj.value("Label").toObject();
+        const QString& labelName = labelObj.value("LabelName").toString();
+        storyShowWidgetInfo.storyInfoWidgetInfo.setting.labelNames << labelName;
+
+        LabelInfo labelInfo;
+        labelInfo.labelName = labelName;
+        labelInfo.labelClass = labelObj.value("LabelClass").toString();
+
+        const QJsonArray& labelGroupArray = labelObj.value("LabelGroup").toArray();
+        for (const auto& groupValue : labelGroupArray) {
+            if (groupValue.isObject()) {
+                const QJsonObject& groupObj = groupValue.toObject();
+                LabelGroup labelGroup;
+                labelGroup.text = groupObj.value("Text").toString();
+                labelGroup.pix.pixUrl = groupObj.value("PixUrl").toString();
+                labelGroup.pix.status1 = groupObj.value("Status1").toInt();
+                labelGroup.pix.status2 = groupObj.value("Status2").toInt();
+                labelGroup.pix.status3 = groupObj.value("Status3").toInt();
+                const QJsonArray& rectArray = groupObj.value("Rect").toArray();
+                labelGroup.rect.left = rectArray.at(0).toInt();
+                labelGroup.rect.top = rectArray.at(1).toInt();
+                labelGroup.rect.width = rectArray.at(2).toInt();
+                labelGroup.rect.height = rectArray.at(3).toInt();
+                labelGroup.mask = groupObj.value("Mask").toBool();
+                labelGroup.cardId = groupObj.value("CardID").toInt();
+                labelGroup.destination = groupObj.value("Destination").toString();
+                labelInfo.labelGroups << labelGroup;
+            }
+        }
+
+        // TODO：根据需求将Label信息存储到数据对象中
+    }
+}
+
