@@ -1,7 +1,7 @@
 {
     "jumpGroup": [
         {
-            "Text": "新存档",
+            "Text": "启航",
             "NormalPix": ":/UI/RESOURCE/test_trapezoiform1.png",
             "PressPix": ":/UI/RESOURCE/test_trapezoiform1_press.png",
             "Mask": true,

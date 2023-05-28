@@ -1,0 +1,46 @@
+{
+    "mainShowLabel": [
+        {
+            "Text": "剧情模式",
+            "Pix": ":/UI/RESOURCE/test_main_obj1.png",
+            "Rect": [910,210,330,200]
+        },
+        {
+            "Text": "角色一览",
+            "Pix": ":/UI/RESOURCE/test_main_obj2.png",
+            "Rect": [1245,200,280,280]
+        },
+        {
+            "Text": "卡库",
+            "Pix": ":/UI/RESOURCE/test_main_obj3.png",
+            "Rect": [900,430,320,290]
+        },
+        {
+            "Text": "唤星",
+            "Pix": ":/UI/RESOURCE/test_main_obj4.png",
+            "Rect": [1210,450,320,290]
+        }
+    ],
+    "ToolShowLabel": [
+        {
+		"Text":"设置",
+            "Pix":":/UI/RESOURCE/test_main_obj8.png",
+            "Rect":[1050,760,130,130]
+        }
+    ],
+    "ToolShowButton": {
+        "Pix1": ":/UI/RESOURCE/test_main_obj6.png",
+        "Pix2": ":/UI/RESOURCE/test_main_obj7.png"
+    },
+    "HeadWidget": {
+        "headPix": ":/UI/RESOURCE/test_main_head.png",
+        "headInfoPix": ":/UI/RESOURCE/test_main_obj5.png",
+        "headFrame": ":/UI/RESOURCE/test_headFrame.png"
+    },
+    "HeadWidgetRect": [0,0,550,250],
+    "TachieLabel":{
+		"CharacterName":"Luwies"
+	},
+    "TachieRect":[150,175,400,711],
+    "BackgroundPix": ":/UI/RESOURCE/test_Background4.png"
+}

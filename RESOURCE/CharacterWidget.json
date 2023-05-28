@@ -1,0 +1,29 @@
+{
+    "CharacterWidget": {
+        "CharacterHubWidget": {
+            "ShowRect": [0, 0, 450, 900],
+            "HideRect": [0, 0, 130, 900],
+            "AreaShowRect": [25, 100, 400, 600],
+            "AreaHideRect": [25, 100, 85, 600],
+            "CardSize": [90, 120],
+            "CardSmallSize": [65, 65],
+            "space": 25
+        },
+        "CharacterShowWidget": {
+            "Rect": [1200, 0, 400, 900]
+        },
+        "CharacterInfoWidget": {
+            "LabelInfo": [{
+                "Text": "人物信息",
+                "Type": "CharacterInfomation"
+            },{ "Text": "角色故事",
+                "Type": "CharacterStory"}
+],
+            "LabelRect": [150, 50, 250, 80],
+            "Space": 20,
+            "NormalPixPath": ":/UI/RESOURCE/test_choiceLabel.png",
+            "ChoicePixPath": ":/UI/RESOURCE/test_choiceLabel2.png"
+        },
+        "BackgroundImagePath": ":/UI/RESOURCE/test_Background5_2.png"
+    }
+}

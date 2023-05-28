@@ -6,7 +6,13 @@
     "background_image4":"border-image:url(:/UI/RESOURCE/test_transparency4.png);",
     "Label_border_style":"border:1px solid white;",
     "Label_border_radius":"border-radius:20%;",
-    "Label_text_style1": "color:white;font-size:25px;font-style:italic;font-family:\"楷体\";",
-    "Label_text_style2": "color:white;font-size:35px;font-style:italic;font-family:\"楷体\";",
-    "Label_text_style3": "color:red;font-size:55px;font-style:italic;font-family:\"楷体\";"
+    "Label_text_style1": "color:white;font-size:15px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style2": "color:white;font-size:20px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style3": "color:white;font-size:25px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style4": "color:white;font-size:30px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style5": "color:red;font-size:35px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style6": "color:black;font-size:20px;font-style:italic;font-family:\"楷体\";",
+    "Label_text_style7": "color:black;font-size:40px;font-style:italic;font-family:\"楷体\";"
+
+
 }
