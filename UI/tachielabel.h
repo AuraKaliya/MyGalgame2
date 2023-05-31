@@ -18,6 +18,7 @@ public:
     TachieLabel(QWidget * parent=nullptr);
     void initCharacter(Character *character,QRect rect);
     void initTouchRect(QMap<QString,QRect>touchRect);
+    void setGesture(QString gesturePixUrl);
     void changeTachie(QString tachieType);
     void setTouchLock(bool touch);
     void mousePressEvent(QMouseEvent *e)override;

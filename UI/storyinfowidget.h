@@ -9,14 +9,14 @@
 #include <QString>
 #include "../DATA/Story/character.h"
 #include "characterstoryshowwidget.h"
-
+#include "style.h"
 
 class StoryInfoWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit StoryInfoWidget(QWidget *parent = nullptr);
-    void initTachie(Character* character,QRect rect);
+    void initTachie(Character* character,QRect rect=QRect(0,0,360,640));
     void initStory(QString storyTitle,QString storyIntroduction);
     void initStory();
 public slots:

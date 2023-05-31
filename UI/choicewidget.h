@@ -12,7 +12,8 @@ class ChoiceWidget : public QScrollArea
 {
     Q_OBJECT
 public:
-    explicit ChoiceWidget(QWidget *parent = nullptr);   
+    explicit ChoiceWidget(QWidget *parent = nullptr);
+    QWidget* getWidget();
     void initTitleLabel(QLabel* titleLabel,QRect rect);
     void initSlipLabel(QLabel* slipLabel,QRect rect);
     void initChoiceLabel(QVector<JumpLabel*>jumpGroup,QVector<QRect> rectGroup);
@@ -21,8 +22,9 @@ public:
     void initIndicator(QLabel* indicatorLabel,bool right=true);//用于指示当前选择的Label
     void setCurrentLabelPixPath(const QString &newCurrentLabelPixPath);
     void paintEvent(QPaintEvent* e)override;
-
+    int getCurrentCharacter();
 signals:
+
 private:
     QWidget * m_mainWidget;
     QVector<JumpLabel*>m_jumpLabelGroup;

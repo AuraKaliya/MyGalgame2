@@ -24,6 +24,7 @@ void storyShowLabel::mousePressEvent(QMouseEvent *event)
 {
     if (currentIndex >= originalText.length()) { // 如果已经显示完全
         emit clicked(); // 发送鼠标单击信号
+        emit segmentFinished();
     } else { // 如果未显示完全
         timer->stop(); // 暂停打字动画
         QString shownText = originalText; // 直接显示全部文本

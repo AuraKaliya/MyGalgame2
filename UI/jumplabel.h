@@ -27,6 +27,7 @@ public:
 
     int getCardID() const;
     void setCardID(int newCardID);
+    void showInfo();
 
 signals:
     // 点击信号，无参数
@@ -35,6 +36,7 @@ signals:
     // void clicked(QWidget* destination);
     void jump(QWidget* destination);
     void choiceCard(int id);
+    void me(JumpLabel*);
 
 protected:
     // 鼠标按下事件

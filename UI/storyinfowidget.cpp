@@ -14,7 +14,7 @@ StoryInfoWidget::StoryInfoWidget(QWidget *parent)
 
 void StoryInfoWidget::initTachie(Character *character, QRect rect)
 {
-    m_tachieLabel->setGeometry(0,0,360,640);
+    m_tachieLabel->setGeometry(rect);
     m_character=character;
 
     m_tachieLabel->initCharacter(m_character,rect);
@@ -52,7 +52,8 @@ void StoryInfoWidget::initStory(QString storyTitle, QString storyIntroduction)
    // m_characterStoryWidget=CharacterStoryShowWidget::getInstance();
     //m_characterStoryWidget->initCharacterStory(storyTitle,storyIntroduction);
 
-
+    Style::getInstance()->setLabelStyleByPalete_45_white(m_storyHeadLabel);
+    Style::getInstance()->setLabelStyleByPalete_25_white(m_storyIntroLabel);
 
 }
 

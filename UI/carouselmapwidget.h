@@ -35,18 +35,28 @@ class CarouselMapWidget : public QWidget
     Q_OBJECT
 public:
     explicit CarouselMapWidget(QWidget *parent = nullptr);
-    void initCarousel(QVector<JumpLabel*> lbg,QSize curSize,QSize norSize,int margin=20);
+    void initCarousel(QVector<JumpLabel*> lbg,QSize curSize=QSize(450,240),QSize norSize=QSize(356,190),int margin=20);
+    void initChangeBtn(QString btn1N,QString btn2N);
     void initMask(QMap<QLabel*,QRect>mask);
+
     void initMaskTest();
     void initZ();
     void initTest();
     void addLabel(JumpLabel* lb);
+    int  getCurrentStoryID();
+
+
 public slots:
     void preLabel();
+    void preLabel(int);
+    void nextLabel(int);
     void nextLabel();
+
+    void setCurrentStoryByLabel(JumpLabel*);
 
 signals:
     void nowStory(int);
+
 private:
     QMap<QLabel*,QRect>m_maskGroup;
     QVector<JumpLabel*>m_carsouseLabelGroup;

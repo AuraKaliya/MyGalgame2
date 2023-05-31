@@ -16,7 +16,7 @@ public:
 
 signals:
     void clicked(); // 定义鼠标单击信号
-
+    void segmentFinished();
 protected:
     void mousePressEvent(QMouseEvent *event) override; // 鼠标按下事件
 

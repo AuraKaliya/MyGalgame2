@@ -17,7 +17,8 @@ public:
     void reset(QMap<QString,QString> style);
     void setLabelStyle(QLabel* label,int imageStyle,int textStyle);
     void setWidgetBackground(QWidget * widget,int imageStyle);
-
+    void setLabelStyleByPalete_45_white(QLabel* label);
+     void setLabelStyleByPalete_25_white(QLabel* label);
 signals:
     void styleChanged();
 

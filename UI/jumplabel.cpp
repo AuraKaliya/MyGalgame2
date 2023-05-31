@@ -115,7 +115,7 @@ void JumpLabel::mousePressEvent(QMouseEvent* event)
        // setPixmap(m_PressPix->scaled(width(),height()));
 
     }
-
+    emit me(this);
     QCoreApplication::postEvent(parentWidget(), new QEvent(QEvent::User));
     QLabel::mousePressEvent(event);
 }
@@ -135,7 +135,7 @@ void JumpLabel::mouseReleaseEvent(QMouseEvent* event)
 
     if (event->button() == Qt::LeftButton ) {
         // 发送无参数的点击信号
-       // qDebug()<<"clicked";
+        qDebug()<<"clicked";
         emit clicked();
        // qDebug()<<"clicked solve";
         // emit  jump(m_DestinationWidget);
@@ -164,4 +164,14 @@ int JumpLabel::getCardID() const
 void JumpLabel::setCardID(int newCardID)
 {
     cardID = newCardID;
+}
+
+void JumpLabel::showInfo()
+{
+    qDebug()<<"__________";
+    qDebug()<<"isVisible:"<<isVisible();
+    qDebug()<<"Url:"<<m_PressPixPath<<"   "<<m_NormalPixPath;
+    qDebug()<<"Geo"<<geometry() <<"ID:"<<cardID;
+    qDebug()<<"__________";
+
 }

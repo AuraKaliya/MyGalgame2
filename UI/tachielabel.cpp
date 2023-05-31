@@ -7,6 +7,7 @@ TachieLabel::TachieLabel(QWidget * parent):QLabel(parent)
 
 void TachieLabel::initCharacter(Character *character, QRect rect)
 {
+    qDebug()<<character;
     m_character=character;
     setMask(QPixmap(m_character->mask()).mask());
     //setPixmap(QPixmap(m_character->getGesture("正常")).scaled(this->size()));
@@ -21,6 +22,11 @@ void TachieLabel::initCharacter(Character *character, QRect rect)
 void TachieLabel::initTouchRect(QMap<QString, QRect> touchRect)
 {
     m_touchRect=touchRect;
+}
+
+void TachieLabel::setGesture(QString gesturePixUrl)
+{
+    setStyleSheet("border-image:url("+gesturePixUrl+");");
 }
 
 void TachieLabel::changeTachie(QString tachieType)

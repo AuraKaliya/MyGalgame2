@@ -73,3 +73,27 @@ void Style::setWidgetBackground(QWidget *widget, int imageStyle)
     qDebug()<<styleSheet;
     widget->setStyleSheet(styleSheet);
 }
+
+void Style::setLabelStyleByPalete_45_white(QLabel *label)
+{
+        label->setFont(QFont("楷体",45,QFont::Bold,Qt::white));
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::white);
+        label->setPalette(pa);
+        label->setScaledContents(true);
+        label->setAlignment(Qt::AlignCenter);
+
+
+
+
+}
+
+void Style::setLabelStyleByPalete_25_white(QLabel *label)
+{
+        label->setFont(QFont("楷体",25,QFont::Bold,Qt::white));
+        QPalette pa;
+        pa.setColor(QPalette::WindowText,Qt::white);
+        label->setPalette(pa);
+        label->setScaledContents(true);
+        label->setAlignment(Qt::AlignCenter);
+}

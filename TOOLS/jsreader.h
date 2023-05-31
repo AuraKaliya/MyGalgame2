@@ -14,7 +14,6 @@
 #include "../UI/rswidget.h"
 #include "sourcetable.h"
 #include "../UI/mainwidget.h"
-#include "../UI/headwidget.h"
 #include "../Story/characterhub.h"
 
 #include "../UI/characterwidget.h"
@@ -22,6 +21,16 @@
 #include "../UI/characterhubwidget.h"
 #include "../UI/characterstoryshowwidget.h"
 #include "../UI/tachielabel.h"
+#include "../UI/carouselmapwidget.h"
+#include "../UI/carouselwidget.h"
+#include "../UI/storyinfowidget.h"
+#include "../UI/choicewidget.h"
+#include "../UI/storywidget.h"
+#include "../UI/talkshowwidget.h"
+#include "../UI/uiwidget.h"
+
+
+
 #include <QObject>
 #include <QVector>
 #include <QString>
@@ -58,9 +67,9 @@ struct LinkInfo {
 // 定义资源信息结构体
 struct ResourceInfo {
     QString pixUrl; // 地址
-    int status1; // 资源状态1
-    int status2; // 资源状态2
-    int status3; // 资源状态3
+    QString status1; // 资源状态1
+    QString status2; // 资源状态2
+    QString status3; // 资源状态3
 };
 // 定义Label组信息结构体
 struct LabelGroup {
@@ -77,6 +86,11 @@ struct LabelInfo {
     QString labelClass; // Label类别
     QList<LabelGroup> labelGroups; // Label组信息
     // TODO: 根据需求定义需要的属性
+    QString labelLayout;
+    int spaceH;
+    int spaceV;
+    WidgetRect rect;
+
 };
 
 
@@ -121,9 +135,17 @@ struct StoryShowWidgetInfo {
     // TODO: 根据需求定义需要的属性
 };
 
-// 读取JSON文件
 
-class JSReader : public QObject
+
+
+
+// 另一种方式
+#define AUTOTYPE(type,value)  *((typeid(##value)*)type)
+
+
+typedef void (*FUNC_Read)(UIWidget*,const QJsonObject&);
+
+ class JSReader : public QObject
 {
     Q_OBJECT
 
@@ -138,20 +160,41 @@ public:
     void readJsonFileToReadAndSave();
     void readJsonFileToMainWidget();
     void readJsonFileToCharacterWidget();
-
+    void readJsonFileToStory();
     QVector<Character*>readJsonFileToCharacter(); //读取JSON文件内容并返回
 
     void readJsonFile();
 
-    void setFilePath(const QString &filePath);  //设置读取路径
+    static void setFilePath(const QString &filePath);  //设置读取路径
 
     void init();
 
 
+public:
+    static void read();
+    static void readObject(UIWidget* parent,const QJsonObject &obj);
+    static void readObject(QWidget* parent,const QJsonObject &obj);
+    static void initObject(UIWidget* w,const QJsonObject &obj);
+    int readInt(const QJsonObject &obj,const QString &key);
+    QString readString(const QJsonObject &obj,const QString &key);
+    static void  readRect(UIWidget* w,const QJsonObject &obj);
+    static QObject* readBackgroundPix(const QJsonObject &obj);
+    static void readSetting(UIWidget* w,const QJsonObject &obj);
+    static void readStoryWidget( UIWidget*parent,const QJsonObject &obj);
+    static void readTalkShowWidget( UIWidget*parent,const QJsonObject &obj);
+    static void readTachieLabel( UIWidget*parent,const QJsonObject &obj);
+
+
 
 private:
+   // QMap<QString,FUNC_>
 
-    QString m_filePath;
+    //不用反射，我找到一个更好的方式，使用虚函数表获取函数指针，用map进行查询，用静态变量和单例进行类的注册
+    static QMap<QString,FUNC_Read> m_ReadFunction;
+    static QMap<QString,QString> m_Property2Type;
+    static QMap<QString,UIWidget*> m_Name2Class;
+    static QString m_filePath;
+
     NowAchievement * m_achievement;
     MusicPlayer * m_musicPlayer;
     MenuWidget * m_menuWidget;
@@ -161,6 +204,8 @@ private:
     MainWidget * m_mainWidget;
     CharacterHub * m_characterHub;
     CharacterWidget * m_characterWidget;
+    CarouselWidget * m_carouselWidget;
+    StoryWidget * m_storyWidget;
 
 signals:
     void deckInfoUpdated(const QVector<QVector<QString> >& deckInfo);

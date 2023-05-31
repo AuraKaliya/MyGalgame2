@@ -1,8 +1,19 @@
 ﻿#include "jsreader.h"
 
+QMap<QString,FUNC_Read> JSReader::m_ReadFunction=QMap<QString,FUNC_Read>();
+
+QMap<QString,QString> JSReader::m_Property2Type=QMap<QString,QString>();
+QMap<QString,UIWidget*> JSReader::m_Name2Class=QMap<QString,UIWidget*>();
+QString JSReader::m_filePath=QString("");
+
 JSReader::JSReader()
 {
+    m_ReadFunction.insert(QString("StoryWidget"),&JSReader::readStoryWidget);
+    m_ReadFunction.insert(QString("TalkShowWidget"),&JSReader::readTalkShowWidget);
+    m_ReadFunction.insert(QString("TachieLabel"),&JSReader::readTachieLabel);
 
+
+    m_Property2Type.insert(QString("BackgroundPixUrl"),QString("QPixmap"));
 }
 
 void JSReader::readJsonFileToAchievement()
@@ -156,6 +167,354 @@ QVector<Character*> JSReader::readJsonFileToCharacter() {
     return characters;
 }
 
+void JSReader::readJsonFile()
+{
+    StoryShowWidgetInfo storyShowWidgetInfo;
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // 打开文件失败
+        return;
+    }
+
+    QByteArray jsonData = file.readAll();
+    QJsonParseError parseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData, &parseError);
+    if (parseError.error != QJsonParseError::NoError || jsonDoc.isNull() || !jsonDoc.isObject()) {
+        // 解析JSON失败
+        return;
+    }
+
+    const QJsonObject& jsonObj = jsonDoc.object();
+    const QJsonObject& storyShowWidgetObj = jsonObj.value("StoryShowWidget").toObject();
+
+    if(storyShowWidgetObj.contains("BackgroundPixUrl"))
+    {
+        qDebug()<<"contains(\"BackgroundPixUrl\")";
+        const QString bkUrl=storyShowWidgetObj.value("BackgroundPixUrl").toString();
+        m_carouselWidget->initBackgroundPix(bkUrl);
+    }
+
+    ChoiceWidget * tmpChoiceWidget=new ChoiceWidget();
+
+    // 解析ChoiceWidget信息
+    if (storyShowWidgetObj.contains("ChoiceWidget")) {
+
+        ////
+
+        tmpChoiceWidget->setParent(m_carouselWidget);
+        ////
+
+        const QJsonObject& choiceWidgetObj = storyShowWidgetObj.value("ChoiceWidget").toObject();
+
+        storyShowWidgetInfo.choiceWidgetInfo.widgetClass = choiceWidgetObj.value("WidgetClass").toString();
+
+        const QJsonArray& widgetRectArray = choiceWidgetObj.value("WidgetRect").toArray();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.left = widgetRectArray.at(0).toInt();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.top = widgetRectArray.at(1).toInt();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.width = widgetRectArray.at(2).toInt();
+        storyShowWidgetInfo.choiceWidgetInfo.rect.height = widgetRectArray.at(3).toInt();
+
+        ////
+        QRect tmpRect( storyShowWidgetInfo.choiceWidgetInfo.rect.left,
+                       storyShowWidgetInfo.choiceWidgetInfo.rect.top,
+                       storyShowWidgetInfo.choiceWidgetInfo.rect.width,
+                       storyShowWidgetInfo.choiceWidgetInfo.rect.height);
+        ////
+
+        const QJsonObject& widgetSettingObj = choiceWidgetObj.value("WidgetSetting").toObject();
+        const QJsonArray& labelArray = widgetSettingObj.value("Label").toArray();
+
+        for (const auto& labelValue : labelArray) {
+            if (labelValue.isObject()) {
+                const QJsonObject& labelObj = labelValue.toObject();
+                const QString& labelName = labelObj.value("LabelName").toString();
+                storyShowWidgetInfo.choiceWidgetInfo.setting.labelNames << labelName;
+
+                LabelInfo labelInfo;
+                labelInfo.labelName = labelName;
+                labelInfo.labelClass = labelObj.value("LabelClass").toString();
+
+                const QJsonArray& labelGroupArray = labelObj.value("LabelGroup").toArray();
+                for (const auto& groupValue : labelGroupArray) {
+                    if (groupValue.isObject()) {
+                        const QJsonObject& groupObj = groupValue.toObject();
+                        LabelGroup labelGroup;
+                        labelGroup.text = groupObj.value("Text").toString();
+                        labelGroup.pix.pixUrl = groupObj.value("PixUrl").toString();
+                        labelGroup.pix.status1 = groupObj.value("NormalPixUrl").toString();
+                        labelGroup.pix.status2 = groupObj.value("PressPixUrl").toString();
+                        labelGroup.pix.status3 = groupObj.value("ChoicePixUrl").toString();
+                        const QJsonArray& rectArray = groupObj.value("Rect").toArray();
+                        labelGroup.rect.left = rectArray.at(0).toInt();
+                        labelGroup.rect.top = rectArray.at(1).toInt();
+                        labelGroup.rect.width = rectArray.at(2).toInt();
+                        labelGroup.rect.height = rectArray.at(3).toInt();
+
+
+
+                        labelGroup.mask = groupObj.value("Mask").toBool();
+                        labelGroup.cardId = groupObj.value("CardID").toInt();
+                        labelGroup.destination = groupObj.value("Destination").toString();
+                        labelInfo.labelGroups << labelGroup;
+                    }
+                }
+                labelInfo.labelLayout=labelObj.value("Layout").toString();
+                labelInfo.spaceH=labelObj.value("SpaceH").toInt();
+                labelInfo.spaceV=labelObj.value("SpaceV").toInt();
+                const QJsonArray& rectArray = labelObj.value("FirstRect").toArray();
+                labelInfo.rect.left=rectArray.at(0).toInt();
+                labelInfo.rect.top=rectArray.at(1).toInt();
+                labelInfo.rect.width=rectArray.at(2).toInt();
+                labelInfo.rect.height=rectArray.at(3).toInt();
+
+                ////////                可用策略模式进行优化，在外部用Map连接QString和（*func）（） 调用即可                      ////////
+                // TODO：根据需求将Label信息存储到数据对象中
+
+                if( labelInfo.labelName=="TitleLabel")
+                {
+                    QLabel * titleLabel=new QLabel(tmpChoiceWidget);
+                    titleLabel->setText(labelInfo.labelGroups[0].text);
+
+                    QRect tmpRect(labelInfo.labelGroups[0].rect.left ,labelInfo.labelGroups[0].rect.top,
+                                  labelInfo.labelGroups[0].rect.width,labelInfo.labelGroups[0].rect.height);
+
+
+                    Style::getInstance()->setLabelStyleByPalete_45_white(titleLabel);
+                    tmpChoiceWidget->initTitleLabel(titleLabel,tmpRect);
+                }
+                else if(labelInfo.labelName=="ChoiceLabel")
+                {
+                    QVector <JumpLabel* > jmpGroup;
+                    QVector <QRect> rectGroup;
+                    for (int i=0;i<labelInfo.labelGroups.size();++i)
+                    {
+                        JumpLabel * choiceLabel=new JumpLabel(tmpChoiceWidget);
+                        choiceLabel->setText(labelInfo.labelGroups[i].text);
+
+                        choiceLabel->setPixmapPathGroup(labelInfo.labelGroups[i].pix.status1,labelInfo.labelGroups[i].pix.status2);
+
+                         QRect tmpRect(labelInfo.labelGroups[i].rect.left ,labelInfo.labelGroups[i].rect.top,
+                                      labelInfo.labelGroups[i].rect.width,labelInfo.labelGroups[i].rect.height);
+                        choiceLabel->setGeometry(tmpRect);
+                        choiceLabel->setCardID(labelInfo.labelGroups[i].cardId);
+
+                        jmpGroup<<choiceLabel;
+                        rectGroup<<tmpRect;
+
+                        Style::getInstance()->setLabelStyleByPalete_25_white(choiceLabel);
+
+                        connect( choiceLabel,&JumpLabel::choiceCard,m_carouselWidget,&CarouselWidget::characterChoiced);
+                    }
+
+                    tmpChoiceWidget->setCurrentLabelPixPath(labelInfo.labelGroups[0].pix.status3);
+                    tmpChoiceWidget->initChoiceLabel(jmpGroup,rectGroup);
+
+                }else if(labelInfo.labelName=="SlipLabel")
+                {
+                    QLabel * slipLabel=new QLabel(tmpChoiceWidget);
+                    slipLabel->setStyleSheet("border-image:url("+labelInfo.labelGroups[0].pix.pixUrl+")");
+
+                    QRect tmpRect(labelInfo.labelGroups[0].rect.left ,labelInfo.labelGroups[0].rect.top,
+                                  labelInfo.labelGroups[0].rect.width,labelInfo.labelGroups[0].rect.height);
+
+                    tmpChoiceWidget->initSlipLabel(slipLabel,tmpRect);
+                }
+            }
+        }
+          //qDebug()<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~555";
+        m_carouselWidget->initChoiceWidget(tmpChoiceWidget,tmpRect);
+          //qDebug()<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2";
+    }
+
+    CarouselMapWidget* tmpCarouselMapWidget=new CarouselMapWidget();
+    // 解析CarouselMapWidget信息
+    if (storyShowWidgetObj.contains("CarousMapWidget")) {
+
+
+
+
+        tmpCarouselMapWidget->setParent(m_carouselWidget);
+
+        const QJsonObject& carousMapWidgetObj = storyShowWidgetObj.value("CarousMapWidget").toObject();
+
+        storyShowWidgetInfo.carousMapWidgetInfo.widgetClass = carousMapWidgetObj.value("WidgetClass").toString();
+
+        const QJsonArray& widgetRectArray = carousMapWidgetObj.value("WidgetRect").toArray();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.left = widgetRectArray.at(0).toInt();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.top = widgetRectArray.at(1).toInt();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.width = widgetRectArray.at(2).toInt();
+        storyShowWidgetInfo.carousMapWidgetInfo.rect.height = widgetRectArray.at(3).toInt();
+
+        QRect tmpRect(storyShowWidgetInfo.carousMapWidgetInfo.rect.left,
+                      storyShowWidgetInfo.carousMapWidgetInfo.rect.top,
+                      storyShowWidgetInfo.carousMapWidgetInfo.rect.width,
+                      storyShowWidgetInfo.carousMapWidgetInfo.rect.height);
+
+        const QJsonObject& widgetSettingObj = carousMapWidgetObj.value("WidgetSetting").toObject();
+        const QJsonArray& labelArray = widgetSettingObj.value("Label").toArray();
+
+        for (const auto& labelValue : labelArray) {
+            if (labelValue.isObject()) {
+                const QJsonObject& labelObj = labelValue.toObject();
+                const QString& labelName = labelObj.value("LabelName").toString();
+                storyShowWidgetInfo.carousMapWidgetInfo.setting.labelNames << labelName;
+
+                LabelInfo labelInfo;
+                labelInfo.labelName = labelName;
+                labelInfo.labelClass = labelObj.value("LabelClass").toString();
+
+                const QJsonArray& labelGroupArray = labelObj.value("LabelGroup").toArray();
+                for (const auto& groupValue : labelGroupArray) {
+                    if (groupValue.isObject()) {
+                        const QJsonObject& groupObj = groupValue.toObject();
+                        LabelGroup labelGroup;
+                        labelGroup.mask = groupObj.value("Mask").toBool();
+                        labelGroup.cardId = groupObj.value("CardID").toInt();
+                        labelGroup.destination = groupObj.value("Destination").toString();
+                        labelInfo.labelGroups << labelGroup;
+                    }
+                }
+
+                // TODO：根据需求将Label信息存储到数据对象中
+                 ////////                可用策略模式进行优化，在外部用Map连接QString和（*func）（） 调用即可                      ////////
+                if(labelInfo.labelName=="ScrollerLabel")
+                {
+
+                }
+
+            }
+        }
+
+        const QJsonObject& buttonObj = widgetSettingObj.value("Button").toObject();
+        const QString& buttonName = buttonObj.value("ButtonName").toString();
+        storyShowWidgetInfo.carousMapWidgetInfo.setting.buttonNames << buttonName;
+
+        ButtonInfo buttonInfo;
+        buttonInfo.buttonName = buttonName;
+        buttonInfo.buttonClass = buttonObj.value("ButtonClass").toString();
+
+        const QJsonArray& buttonGroupArray = buttonObj.value("ButtonGroup").toArray();
+        for (const auto& groupValue : buttonGroupArray) {
+            if (groupValue.isObject()) {
+                const QJsonObject& groupObj = groupValue.toObject();
+                ButtonGroup buttonGroup;
+                buttonGroup.pressPix.pixUrl = groupObj.value("PressPixUrl").toString();
+                buttonGroup.pressPix.status1 = groupObj.value("Status1").toString();
+                buttonGroup.pressPix.status2 = groupObj.value("Status2").toString();
+                buttonGroup.pressPix.status3 = groupObj.value("Status3").toString();
+                buttonGroup.normalPix.pixUrl = groupObj.value("NormalPixUrl").toString();
+                buttonGroup.normalPix.status1 = groupObj.value("Status1").toString();
+                buttonGroup.normalPix.status2 = groupObj.value("Status2").toString();
+                buttonGroup.normalPix.status3 = groupObj.value("Status3").toString();
+                const QJsonArray& rectArray = groupObj.value("Rect").toArray();
+                buttonGroup.rect.left = rectArray.at(0).toInt();
+                buttonGroup.rect.top = rectArray.at(1).toInt();
+                buttonGroup.rect.width = rectArray.at(2).toInt();
+                buttonGroup.rect.height = rectArray.at(3).toInt();
+                buttonGroup.link = groupObj.value("Link").toString();
+                buttonInfo.buttonGroups << buttonGroup;
+            }
+        }
+
+        // TODO：根据需求将Button信息存储到数据对象中
+        tmpCarouselMapWidget->initChangeBtn(buttonInfo.buttonGroups[0].normalPix.pixUrl,buttonInfo.buttonGroups[1].normalPix.pixUrl);
+
+
+        m_carouselWidget->initCaroselMapWidget(tmpCarouselMapWidget,tmpRect);
+    }
+
+    StoryInfoWidget * tmpStoryInfoWidget=new StoryInfoWidget();
+    // 解析StoryInfoWidget信息
+    if (storyShowWidgetObj.contains("StroyInfoWidget")) {
+
+        tmpStoryInfoWidget->setParent(m_carouselWidget);
+
+        const QJsonObject& storyInfoWidgetObj = storyShowWidgetObj.value("StroyInfoWidget").toObject();
+
+        storyShowWidgetInfo.storyInfoWidgetInfo.widgetClass = storyInfoWidgetObj.value("WidgetClass").toString();
+
+        const QJsonArray& widgetRectArray = storyInfoWidgetObj.value("WidgetRect").toArray();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.left = widgetRectArray.at(0).toInt();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.top = widgetRectArray.at(1).toInt();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.width = widgetRectArray.at(2).toInt();
+        storyShowWidgetInfo.storyInfoWidgetInfo.rect.height = widgetRectArray.at(3).toInt();
+
+        QRect tmpRect(storyShowWidgetInfo.storyInfoWidgetInfo.rect.left,
+                      storyShowWidgetInfo.storyInfoWidgetInfo.rect.top,
+                      storyShowWidgetInfo.storyInfoWidgetInfo.rect.width,
+                      storyShowWidgetInfo.storyInfoWidgetInfo.rect.height);
+
+        const QJsonObject& widgetSettingObj = storyInfoWidgetObj.value("WidgetSetting").toObject();
+        const QJsonArray& linkObjectsArray = widgetSettingObj.value("LinkObjects").toArray();
+        QStringList linkObjectsList;
+        for (int i = 0; i < linkObjectsArray.size(); ++i) {
+            linkObjectsList.append(linkObjectsArray.at(i).toString());
+        }
+        const QJsonArray& linkSignalsArray = widgetSettingObj.value("LinkSignals").toArray();
+        QStringList linkSignalsList;
+        for (int i = 0; i < linkSignalsArray.size(); ++i) {
+            linkSignalsList.append(linkSignalsArray.at(i).toString());
+        }
+        const QJsonArray& linkSlotsArray = widgetSettingObj.value("LinkSlots").toArray();
+        QStringList linkSlotsList;
+        for (int i = 0; i < linkSlotsArray.size(); ++i) {
+            linkSlotsList.append(linkSlotsArray.at(i).toString());
+        }
+
+        if (!linkObjectsList.isEmpty() && !linkSignalsList.isEmpty() && !linkSlotsList.isEmpty()) {
+            storyShowWidgetInfo.storyInfoWidgetInfo.link.linkObjectName = linkObjectsList.first();
+            storyShowWidgetInfo.storyInfoWidgetInfo.link.linkSignalName = linkSignalsList.first();
+            storyShowWidgetInfo.storyInfoWidgetInfo.link.linkSlotName = linkSlotsList.first();
+        }
+
+        const QJsonObject& labelObj = widgetSettingObj.value("Label").toObject();
+        const QString& labelName = labelObj.value("LabelName").toString();
+        storyShowWidgetInfo.storyInfoWidgetInfo.setting.labelNames << labelName;
+
+        LabelInfo labelInfo;
+        labelInfo.labelName = labelName;
+        labelInfo.labelClass = labelObj.value("LabelClass").toString();
+
+        const QJsonArray& labelGroupArray = labelObj.value("LabelGroup").toArray();
+        for (const auto& groupValue : labelGroupArray) {
+            if (groupValue.isObject()) {
+                const QJsonObject& groupObj = groupValue.toObject();
+                LabelGroup labelGroup;
+                labelGroup.text = groupObj.value("Text").toString();
+                labelGroup.pix.pixUrl = groupObj.value("PixUrl").toString();
+                labelGroup.pix.status1 = groupObj.value("Status1").toString();
+                labelGroup.pix.status2 = groupObj.value("Status2").toString();
+                labelGroup.pix.status3 = groupObj.value("Status3").toString();
+                const QJsonArray& rectArray = groupObj.value("Rect").toArray();
+                labelGroup.rect.left = rectArray.at(0).toInt();
+                labelGroup.rect.top = rectArray.at(1).toInt();
+                labelGroup.rect.width = rectArray.at(2).toInt();
+                labelGroup.rect.height = rectArray.at(3).toInt();
+                labelGroup.mask = groupObj.value("Mask").toBool();
+                labelGroup.cardId = groupObj.value("CardID").toInt();
+                labelGroup.destination = groupObj.value("Destination").toString();
+                labelInfo.labelGroups << labelGroup;
+            }
+        }
+
+        // TODO：根据需求将Label信息存储到数据对象中
+
+
+        m_carouselWidget->initStoryInfoWidget(tmpStoryInfoWidget,tmpRect);
+
+    }
+
+   // connect()
+
+
+    m_carouselWidget->initChoiced();
+     qDebug()<<"谢谢谢谢谢谢"<<Qt::endl;
+     qDebug()<<"谢谢谢谢谢谢2"<<Qt::endl;
+    Style::getInstance()->setWidgetBackground(tmpStoryInfoWidget,2);
+    Style::getInstance()->setWidgetBackground(tmpChoiceWidget,2);
+    Style::getInstance()->setWidgetBackground(tmpCarouselMapWidget,2);
+}
+
 void JSReader::setFilePath(const QString &filePath)
 {
     m_filePath = filePath;
@@ -172,7 +531,173 @@ void JSReader::init()
     m_mainWidget=MainWidget::getInstance();
     m_characterHub=CharacterHub::getInstance();
     m_characterWidget=CharacterWidget::getInstance();
+    m_carouselWidget=CarouselWidget::getInstance();
+    m_storyWidget=StoryWidget::getInstance();
+
+    m_Name2Class.insert(QString("StoryWidget"),StoryWidget::getInstance());
+
+
+
+
+
+
+
 }
+
+void JSReader::read()
+{
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // 打开文件失败
+        return;
+    }
+
+    QString jsonStr = file.readAll();
+    file.close();
+
+    QJsonParseError parseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        // 解析json内容失败
+        return;
+    }
+
+    QJsonObject jsonObj = jsonDoc.object();
+    readObject(reinterpret_cast<UIWidget*>(Updater::getInstance()->findParent(StoryWidget::getInstance())),jsonObj);
+}
+
+void JSReader::readObject(UIWidget *parent, const QJsonObject &obj)
+{
+
+    for(auto it=obj.begin();it!=obj.end();++it)
+    {
+        m_ReadFunction.value(it.value().toObject().value("Class").toString())(parent,it.value().toObject());
+    }
+}
+
+void JSReader::readObject(QWidget *parent, const QJsonObject &obj)
+{
+    for(auto it=obj.begin();it!=obj.end();++it)
+    {
+        m_ReadFunction.value(it.value().toObject().value("Class").toString())(reinterpret_cast<UIWidget*>(parent),it.value().toObject());
+    }
+}
+
+void JSReader::initObject(UIWidget *w, const QJsonObject &obj)
+{
+    //initRect
+    if(obj.contains("Rect"))
+    {
+        readRect(w,obj);
+    }
+
+    //initSetting
+    if(obj.contains("Setting"))
+    {
+        QJsonObject setting=obj.value("Setting").toObject();
+        readSetting(w,setting);
+    }
+    //initContains
+    if(obj.contains("Contains"))
+    {
+        QJsonObject childObj=obj.value("Contains").toObject();
+        readObject(w,childObj);
+    }
+}
+
+
+
+int JSReader::readInt(const QJsonObject &obj, const QString &key)
+{
+    return obj.value(key).toInt();
+}
+
+QString JSReader::readString(const QJsonObject &obj, const QString &key)
+{
+    return obj.value(key).toString();
+}
+
+void JSReader::readRect(UIWidget *w, const QJsonObject &obj)
+{
+    QJsonArray rectArray = obj.value("Rect").toArray();
+    int x = rectArray.at(0).toInt();
+    int y = rectArray.at(1).toInt();
+    int with = rectArray.at(2).toInt();
+    int height = rectArray.at(3).toInt();
+    w->setGeometry(QRect(x, y, with, height));
+}
+
+
+
+QObject* JSReader::readBackgroundPix(const QJsonObject &obj)
+{
+    return  (QObject*)new QPixmap(obj.value("BackgroundPixUrl").toString());
+}
+
+void JSReader::readSetting(UIWidget *w, const QJsonObject &obj)
+{
+    if(obj.contains("BackgroundPixUrl"))
+    {
+        w->setBackgroundPixUrl(obj.value("BackgroundPixUrl").toString());
+    }
+    if(obj.contains("BackgroundMusicUrl"))
+    {
+        w->setBackgroundMusicUrl(obj.value("BackgroundMusicUrl").toString());
+    }
+    if(obj.contains("Style"))
+    {
+        w->setStyle(obj.value("Style").toString());
+    }
+}
+
+ void JSReader::readStoryWidget( UIWidget* parent, const QJsonObject &obj)
+{
+    StoryWidget::getInstance()->setParent((QWidget*)parent);
+//    //initRect
+//    if(obj.contains("Rect"))
+//    {
+//        readRect(StoryWidget::getInstance(),obj);
+//    }
+
+//    //initSetting
+//    if(obj.contains("Setting"))
+//    {
+//        QJsonObject setting=obj.value("Setting").toObject();
+//        readSetting(StoryWidget::getInstance(),setting);
+//    }
+//    //initContains
+//    if(obj.contains("Contains"))
+//    {
+//        QJsonObject childObj=obj.value("Contains").toObject();
+//        readObject(StoryWidget::getInstance(),childObj);
+//    }
+    initObject(StoryWidget::getInstance(),obj);
+
+}
+
+void JSReader::readTalkShowWidget(UIWidget *parent, const QJsonObject &obj)
+{
+    TalkShowWidget * tmpTalk=new TalkShowWidget(parent);
+    initObject(tmpTalk,obj);
+    parent->initTalkShowWidget(tmpTalk,tmpTalk->geometry());
+
+}
+
+void JSReader::readTachieLabel(UIWidget *parent, const QJsonObject &obj)
+{
+        // 暂时用固定法  --storyShowWidget的tachieLabel
+    TachieLabel * tmp=new TachieLabel(parent);
+    //或许能用addWidget进行代替----主体窗体中主动调用setParent和init函数， 整个addWidget放在虚函数中 在读入处仅调用parent的addWidget
+    QJsonArray rectArray = obj.value("Rect").toArray();
+    int x = rectArray.at(0).toInt();
+    int y = rectArray.at(1).toInt();
+    int width = rectArray.at(2).toInt();
+    int height = rectArray.at(3).toInt();
+    tmp->setGeometry(QRect(x,y,width,height));
+    tmp->initCharacter(CharacterHub::getInstance()->findCharacter(obj.value("Setting").toObject().value("DefaultCharacter").toString()),tmp->geometry());
+    parent->initTachieLabel(tmp,tmp->geometry());
+}
+
 void JSReader::readJsonFileToMusicPlayer()
 {
     QFile file(m_filePath);
@@ -1077,6 +1602,61 @@ void JSReader::readJsonFileToCharacterWidget()
 
 }
 
+void JSReader::readJsonFileToStory()
+{
+
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QByteArray jsonData = file.readAll();
+    QJsonDocument jsonDoc(QJsonDocument::fromJson(jsonData));
+
+    if (!jsonDoc.isNull())
+    {
+
+        QVector<Story*> stL;
+
+        QJsonObject topLevelObj = jsonDoc.object();
+
+        if (topLevelObj.contains("StoryChapter"))
+        {
+            QJsonArray chapterArray = topLevelObj["StoryChapter"].toArray();
+            for (int i=0; i<chapterArray.size(); ++i)
+            {
+                QJsonObject chapterObj = chapterArray[i].toObject();
+
+                QString title = chapterObj["Title"].toString();
+                QString storyIntroduction = chapterObj["StoryIntroduction"].toString();
+                QString storyText = chapterObj["StoryText"].toString();
+                QString storyCoverPix = chapterObj["StoryCoverPix"].toString();
+                int linkCharacterID=chapterObj["CharacterID"].toInt();
+                int linkStoryIdx = chapterObj["LinkStoryIdx"].toInt();
+
+                // TODO: 对每个章节进行处理，这里只输出到控制台
+                qDebug() << "Title:" << title
+                         << ", StoryIntroduction:" << storyIntroduction
+                         << ", StoryText:" << storyText
+                         << ", StoryCoverPix:" << storyCoverPix
+                         << ", LinkStoryIdx:" << linkStoryIdx;
+                Story *story =new Story();
+                story->initStory(linkStoryIdx,title,storyIntroduction,storyText);
+                story->setCharacterID(linkCharacterID);
+                story->setCoverPixUrl(storyCoverPix);
+                stL<<story;
+            }
+
+        }
+        m_characterHub->initStory(stL);
+    }
+
+
+
+
+
+
+}
+
 // 读取JSON文件
 void readJsonFile(const QString& fileName, StoryShowWidgetInfo& storyShowWidgetInfo) {
     QFile file(fileName);
@@ -1128,9 +1708,9 @@ void readJsonFile(const QString& fileName, StoryShowWidgetInfo& storyShowWidgetI
                         LabelGroup labelGroup;
                         labelGroup.text = groupObj.value("Text").toString();
                         labelGroup.pix.pixUrl = groupObj.value("PixUrl").toString();
-                        labelGroup.pix.status1 = groupObj.value("Status1").toInt();
-                        labelGroup.pix.status2 = groupObj.value("Status2").toInt();
-                        labelGroup.pix.status3 = groupObj.value("Status3").toInt();
+                        labelGroup.pix.status1 = groupObj.value("Status1").toString();
+                        labelGroup.pix.status2 = groupObj.value("Status2").toString();
+                        labelGroup.pix.status3 = groupObj.value("Status3").toString();
                         const QJsonArray& rectArray = groupObj.value("Rect").toArray();
                         labelGroup.rect.left = rectArray.at(0).toInt();
                         labelGroup.rect.top = rectArray.at(1).toInt();
@@ -1144,8 +1724,30 @@ void readJsonFile(const QString& fileName, StoryShowWidgetInfo& storyShowWidgetI
                 }
 
                 // TODO：根据需求将Label信息存储到数据对象中
+               // ChoiceWidget * tmpChoiceWidget=new ChoiceWidget();
+                //tmpChoiceWidget->setParent(m_carouselWidget);
+
+
+
+
+
+
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     // 解析CarouselMapWidget信息
@@ -1203,13 +1805,13 @@ void readJsonFile(const QString& fileName, StoryShowWidgetInfo& storyShowWidgetI
                 const QJsonObject& groupObj = groupValue.toObject();
                 ButtonGroup buttonGroup;
                 buttonGroup.pressPix.pixUrl = groupObj.value("PressPixUrl").toString();
-                buttonGroup.pressPix.status1 = groupObj.value("Status1").toInt();
-                buttonGroup.pressPix.status2 = groupObj.value("Status2").toInt();
-                buttonGroup.pressPix.status3 = groupObj.value("Status3").toInt();
+                buttonGroup.pressPix.status1 = groupObj.value("Status1").toString();
+                buttonGroup.pressPix.status2 = groupObj.value("Status2").toString();
+                buttonGroup.pressPix.status3 = groupObj.value("Status3").toString();
                 buttonGroup.normalPix.pixUrl = groupObj.value("NormalPixUrl").toString();
-                buttonGroup.normalPix.status1 = groupObj.value("Status1").toInt();
-                buttonGroup.normalPix.status2 = groupObj.value("Status2").toInt();
-                buttonGroup.normalPix.status3 = groupObj.value("Status3").toInt();
+                buttonGroup.normalPix.status1 = groupObj.value("Status1").toString();
+                buttonGroup.normalPix.status2 = groupObj.value("Status2").toString();
+                buttonGroup.normalPix.status3 = groupObj.value("Status3").toString();
                 const QJsonArray& rectArray = groupObj.value("Rect").toArray();
                 buttonGroup.rect.left = rectArray.at(0).toInt();
                 buttonGroup.rect.top = rectArray.at(1).toInt();
@@ -1273,9 +1875,9 @@ void readJsonFile(const QString& fileName, StoryShowWidgetInfo& storyShowWidgetI
                 LabelGroup labelGroup;
                 labelGroup.text = groupObj.value("Text").toString();
                 labelGroup.pix.pixUrl = groupObj.value("PixUrl").toString();
-                labelGroup.pix.status1 = groupObj.value("Status1").toInt();
-                labelGroup.pix.status2 = groupObj.value("Status2").toInt();
-                labelGroup.pix.status3 = groupObj.value("Status3").toInt();
+                labelGroup.pix.status1 = groupObj.value("Status1").toString();
+                labelGroup.pix.status2 = groupObj.value("Status2").toString();
+                labelGroup.pix.status3 = groupObj.value("Status3").toString();
                 const QJsonArray& rectArray = groupObj.value("Rect").toArray();
                 labelGroup.rect.left = rectArray.at(0).toInt();
                 labelGroup.rect.top = rectArray.at(1).toInt();
