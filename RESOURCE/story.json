@@ -1,0 +1,20 @@
+{
+    "StoryChapter": [
+        {
+            "Title": "烈火的朱凤",
+            "StoryIntroduction": "测试1",
+            "StoryText": "Background:test_bk1$Character:Luwies$Gesture:正常$TalkText:这是艾尔莎国的一个小城镇，这里的人们信奉火焰，认为它是神圣和强大的力量。他们用火焰来照明、取暖、烹饪、庆祝，甚至用火焰来表达自己的心情和意志。\n$PlusIntroduction:Story#Character@Luwies#loveUp@10|Background:test_bk2$Character:Luwies$Gesture:害羞$TalkText:在这里，有一个特别的女孩，她叫做Luwies。她有一双能够驾驭火焰的手，她可以用手指在空中画出各种美丽的图案和文字，让黑夜变成了她的画板。她用火焰表达自己的心情，快乐时火焰跳舞，愤怒时火焰咆哮。她因此闻名于国内外，人们都称她为“烈火的朱凤”，因为她就像一只凤凰一样，能够掌控火焰。\n$PlusIntroduction:Story#Character@Luwies#loveUp@10,Story#Player@Player#GetMoney@100|TalkText:在这里，有一个特别的女孩，她叫做Luwies。她有一双能够驾驭火焰的手，她可以用手指在空中画出各种美丽的图案和文字，让黑夜变成了她的画板。她用火焰表达自己的心情，快乐时火焰跳舞，愤怒时火焰咆哮。她因此闻名于国内外，人们都称她为“烈火的朱凤”，因为她就像一只凤凰一样，能够掌控火焰。\n|Background:test_bk3$Character:李韶奏$Gesture:正常$TalkText:今天是我的十六岁生日，我要用火焰给自己庆祝！\n$PlusIntroduction:Story#Character@Luwies#loveUp@10|Options:真不错-Story#Character@Luwies#loveUp@10,还行吧-Story#Character@Luwies#loveUp@5,不太好-Story#Character@Luwies#loveDown@10",
+		"StoryCoverPix":":/Character/RESOURCE/Character_Luwies_Story_1.png",
+            "LinkStoryIdx": 1002,
+		"CharacterID":10002
+        },
+        {
+            "Title": "烈火的朱凤2",
+            "StoryIntroduction": "测试2",
+            "StoryText": "Background:test_bk1$Character:Luwies$Gesture:正常$TalkText:这是艾尔莎国的一个小城镇，这里的人们信奉火焰，认为它是神圣和强大的力量。他们用火焰来照明、取暖、烹饪、庆祝，甚至用火焰来表达自己的心情和意志。\n$PlusIntroduction:Story#Character@Luwies#loveUp@10|Background:test_bk2$Character:Luwies$Gesture:害羞$TalkText:在这里，有一个特别的女孩，她叫做Luwies。她有一双能够驾驭火焰的手，她可以用手指在空中画出各种美丽的图案和文字，让黑夜变成了她的画板。她用火焰表达自己的心情，快乐时火焰跳舞，愤怒时火焰咆哮。她因此闻名于国内外，人们都称她为“烈火的朱凤”，因为她就像一只凤凰一样，能够掌控火焰。\n$PlusIntroduction:Story#Character@Luwies#loveUp@10,Story#Player@Player#GetMoney@100|TalkText:在这里，有一个特别的女孩，她叫做Luwies。她有一双能够驾驭火焰的手，她可以用手指在空中画出各种美丽的图案和文字，让黑夜变成了她的画板。她用火焰表达自己的心情，快乐时火焰跳舞，愤怒时火焰咆哮。她因此闻名于国内外，人们都称她为“烈火的朱凤”，因为她就像一只凤凰一样，能够掌控火焰。\n|Background:test_bk3$Character:李韶奏$Gesture:正常$TalkText:今天是我的十六岁生日，我要用火焰给自己庆祝！\n$PlusIntroduction:Story#Character@Luwies#loveUp@10|Options:真不错-Story#Character@Luwies#loveUp@10,还行吧-Story#Character@Luwies#loveUp@5,不太好-Story#Character@Luwies#loveDown@10",
+		"StoryCoverPix":":/Character/RESOURCE/Character_Luwies_Story_2.png",
+            "LinkStoryIdx": 1003,
+		"CharacterID":10002
+        }
+    ]
+}

@@ -13,7 +13,7 @@
                                 "Text": "剧情选择",
                                 "Rect": [25, 10, 350, 120]
                             }
-                        ]
+        ]
                     },
                     {
                         "LabelName": "SlipLabel",
@@ -24,7 +24,7 @@
                                 "Rect": [10, 140, 380, 20],
                                 "Mask": "false"
                             }
-                        ],
+        ],
                         "Layout": "none"
                     },
                     {
@@ -41,7 +41,7 @@
                                 "CardID": 10002,
                                 "Destination": "Luwies"
                             }
-                        ],
+        ],
                         "Layout": "auto",
                         "SpaceH": 0,
                         "SpaceV": 15,
@@ -50,51 +50,53 @@
                 ]
             }
         },
-        "CarousMapWidget": {
-            "WidgetClass": "CarouselMapWidget",
-            "WidgetRect": [425, 650, 1150, 250],
-            "WidgetSetting": {
-                "Label": [
-                    {
-                        "LabelName": "ScrollerLabel",
-                        "LabelClass": "JumpLabel",
-                        "LabelGroup": [
-                            {
-                                "Mask": "false",
-                                "CardID": 0,
-                                "Destination": ""
-                            }
-                        ]
-                    }
-                ],
-                "Button": {
-                    "ButtonName": "ScrollerButton",
-                    "ButtonClass": "QPushButton",
-                    "ButtonGroup": [
-                        {
-                            "PressPixUrl": "",
-                            "NormalPixUrl": "",
-                            "Rect": [],
-                            "Link": ""
-                        },
-                        {
-                            "PressPixUrl": "",
-                            "NormalPixUrl": "",
-                            "Rect": [],
-                            "Link": ""
-                        }
-                    ]
-                }
+                         "CarousMapWidget": {
+                             "WidgetClass": "CarouselMapWidget",
+                             "WidgetRect": [425, 650, 1150, 250],
+                             "WidgetSetting": {
+                                 "Label": [
+                                     {
+                                         "LabelName": "ScrollerLabel",
+                                         "LabelClass": "JumpLabel",
+                                         "LabelGroup": [
+                                             {
+                                                 "Mask": "false",
+                                                 "CardID": 0,
+                                                 "Destination": ""
+                                             }
+        ],
+                                         "SpaceH": 0
+                                     }
+        ],
+                                 "Button": {
+                                     "ButtonName": "ScrollerButton",
+                                     "ButtonClass": "QPushButton",
+                                     "ButtonGroup": [
+                                         {
+                                             "PressPixUrl": "",
+                                             "NormalPixUrl": ":/UI/RESOURCE/test_leftBtn.png",
+                                             "Rect": [0,15,50,220],
+                                             "Link": ""
+                                         },
+                                         {
+                                             "PressPixUrl": "",
+                                             "NormalPixUrl": ":/UI/RESOURCE/test_rightBtn.png",
+                                             "Rect": [1100,15,50,220],
+                                             "Link": ""
+                                         }
+                                     ]
+                                 }
+                             }
+                         },
+                                             "StroyInfoWidget": {
+            "WidgetClass": "StoryInfoWidget",
+                            "WidgetRect": [400, 0, 1200, 640],
+                                           "WidgetSetting": {
+                "LinkObjects": ["CarouselMapWidget"],
+                                "LinkSignals": ["nowStory"],
+                                                "LinkSlots": ["setNowStory"]
             }
         },
-        "StroyInfoWidget": {
-            "WidgetClass": "StoryInfoWidget",
-            "WidgetRect": [400, 0, 1200, 640],
-            "WidgetSetting": {
-                "LinkObjects": ["CarouselMapWidget"],
-                "LinkSignals": ["nowStory"],
-                "LinkSlots": ["setNowStory"]
-            }
-        }
+       "BackgroundPixUrl":":/UI/RESOURCE/test_Background6.png" 
     }
 }

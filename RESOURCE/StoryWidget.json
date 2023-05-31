@@ -1,0 +1,32 @@
+{
+    "StoryWidget": {
+        "Class": "StoryWidget",
+        "Count": 1,
+        "Rect": [0, 0, 1600, 900],
+        "Setting": {
+            "BackgroundPixUrl": "",
+            "BackgroundMusicUrl": "",
+            "Style": ""
+        },
+        "Contains": {
+            "TalkShowWidget": {
+                "Class": "TalkShowWidget",
+                "Count": 1,
+                "Rect": [0,600, 1600, 300],
+                "Setting": {
+                    "Style": ""
+                }
+            },
+            "TachieLabel": {
+                "Class": "TachieLabel",
+                "Count": 1,
+                "Rect": [890, 150, 422, 750],
+                "Setting": {
+                    "DefaultCharacter": "Luwies",
+                    "Animation": "false",
+                    "Touch": "false"
+                }
+            }
+        }
+    }
+}
